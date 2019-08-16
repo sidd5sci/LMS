@@ -10,8 +10,8 @@
     		
     		<ul class="header-menu-list">
     			<li class="header-menu-list-item"><a href="home.htm">Home</a></li>
-    			<li class="header-menu-list-item"><a href="home.htm">About</a></li>
-    			<li class="header-menu-list-item"><a href="home.htm">Login</a></li>   			
+    			<li class="header-menu-list-item"><a href="about.htm">About</a></li>
+    			<li class="header-menu-list-item"><a href="login.htm">Login</a></li>   			
     		</ul>
     	</div>
     

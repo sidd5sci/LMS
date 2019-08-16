@@ -12,7 +12,7 @@ String viewPath = ctx.getInitParameter("viewPath");
 <html>
 	<head>
 		<meta charset="ISO-8859-1">
-		<title>Insert title here</title>
+		<title>Home | LMS</title>
 		<link rel="stylesheet" href="<%=baseUrl%>resources/css/grid.css"/>
 		<link rel="stylesheet" href="<%=baseUrl%>resources/css/main.css"/>
 		<link rel="stylesheet" href="<%=baseUrl%>resources/css/home.css"/>
