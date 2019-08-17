@@ -1,12 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
-<!DOCTYPE html>
-<html>
-	<head>
-		<meta charset="ISO-8859-1">
-		<title>Insert title here</title>
-	</head>
-<body>
 
-</body>
-</html>
+<div class="db-footer">
+	<p class="db-footer-copyright">
+		&copy; Copyright 2019 <br>
+		frapwise
+	</p>
+
+</div>

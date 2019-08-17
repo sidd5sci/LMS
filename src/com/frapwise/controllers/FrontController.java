@@ -14,8 +14,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.frapwise.entities.Session;
 import com.frapwise.entities.User;
 import com.frapwise.exceptions.UserException;
+import com.frapwise.models.SessionModel;
 import com.frapwise.models.UserModel;
 import com.frapwise.utils.RandomGenerator;
 
@@ -92,21 +94,74 @@ public class FrontController extends HttpServlet {
 				session.setAttribute("name", u.getFname()+" "+u.getLname());
 				
 				System.out.println(ssid);
+				// setting session id to cookie
 				Cookie cookie = new Cookie("ssid",ssid);
 				cookie.setMaxAge(5*60*60);
 				response.addCookie(cookie);
-				response.sendRedirect(url+"dashboard.htm");
+				// setting session DB
+				Session sess = new Session();
+				sess.setSsid(ssid);
+				sess.setUid(u.getId());
+				sess.setPayload(session.toString());
+				
+				SessionModel sessModel = new SessionModel(); 
+				sessModel.setSession(sess);
+				
+				if(u.getRole().equals("admin"))				
+					response.sendRedirect(url+"admin-dashboard.htm");
+				else
+					response.sendRedirect(url+"employee-dashboard.htm");
 				
 			}else {
-				out.println("fuck....");
+				RequestDispatcher rd = request.getRequestDispatcher(path+"auth/login.jsp");
+				rd.forward(request, response);
 			}
 			
 			
-		}else if(requestUrl.endsWith("dashboard.htm")) {
-			RequestDispatcher rd = request.getRequestDispatcher(path+"admin/index.jsp");
+		}else if(requestUrl.endsWith("employee-dashboard.htm")) {
+			Cookie[] cookies = request.getCookies();
+			String ssid = "";
+			for(Cookie c:cookies) {
+				if(c.getName().equals("ssid")) {
+					ssid = c.getValue();
+				}
+			}
+			// get the session data from database
+			Session sess = new Session();
+			SessionModel sessModel = new SessionModel(); 
+			sess = sessModel.getSession(ssid);
+			
+			RequestDispatcher rd = request.getRequestDispatcher(path+"employee/index.jsp");
 			rd.forward(request, response);
+		}else if(requestUrl.endsWith("admin-dashboard.htm")) {
+			Cookie[] cookies = request.getCookies();
+			String ssid = "";
+			for(Cookie c:cookies) {
+				if(c.getName().equals("ssid")) {
+					ssid = c.getValue();
+				}
+			}
+			if(ssid.equals("")) {
+				out.println("Session Expired ... ");
+			}
+			else {
+				// get the session data from database
+				Session sess = new Session();
+				SessionModel sessModel = new SessionModel(); 
+				sess = sessModel.getSession(ssid);
+				RequestDispatcher rd = request.getRequestDispatcher(path+"admin/index.jsp");
+				rd.forward(request, response);
+				
+			}
+			
+			
+			
 		}
 		
 		
 	}
+	
+	
+	
+	
 }

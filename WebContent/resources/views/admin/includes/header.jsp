@@ -1,10 +1,18 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
+<%
+ServletContext ctx = getServletContext();
+String baseUrl = ctx.getInitParameter("url");
+String viewPath = ctx.getInitParameter("viewPath");
 
+%>
     <div class="db-header">
     
     	<div class="db-header-brand">
     		<a href="">FrapWise</a>
+    	</div>
+    	<div class="db-header-toggle">
+    		<img src="<%=baseUrl%>resources/uploads/menu.svg" />
     	</div>
     	<div class="db-header-menu">
     		

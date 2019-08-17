@@ -24,8 +24,14 @@ String viewPath = ctx.getInitParameter("viewPath");
 
 
 	<jsp:include page="includes/header.jsp"/>
-
-jjhgjgjk hh
-
+	<jsp:include page="includes/sidebar.jsp"/>
+	
+	<div class="db-main-content">
+	
+	<h3 style="font-size: 30px;font-weight: lighter;">Dashboard</h3>
+	<hr style="background:#ccc;width:100%;height:1px;"/>
+	</div>
+	
+	<jsp:include page="includes/footer.jsp"/>
 </body>
 </html>
