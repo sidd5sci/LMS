@@ -4,7 +4,7 @@
     <div class="header">
     
     	<div class="header-brand">
-    		<a href="">FrapWise</a>
+    		<a href="">NetCracker Training</a>
     	</div>
     	<div class="header-menu">
     		

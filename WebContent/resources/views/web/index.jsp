@@ -35,16 +35,16 @@ String viewPath = ctx.getInitParameter("viewPath");
 					</h1>
 					<p class="display-text-1">
 						Click below link for demo<br>
-						Admin login : admin@example.com / 1234<br>
-						Agent login : agent@example.com / 1234<br>
+						Admin login : admin@example.com / 123456<br>
+						Agent login : agent@example.com / 123456<br>
 					</p>
 					<p style="height:20px;">&nbsp;</p>
-					<a class="btn" href="demo.htm"> Check Demo </a>
+					<a class="btn" href="login.htm"> Check Demo </a>
 	
 				</div>
 				<div class="col-md-6 ">
 					<p style="height:50px;">&nbsp;</p>
-					<img src="#"/>
+					<img src="<%=baseUrl%>resources/uploads/Screenshot_19.png"/>
 				</div>
 			</div>
 			

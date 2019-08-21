@@ -57,7 +57,7 @@
  2: Header 
  3: Buttons
  4: Images
- 
+ 5: Tables
  */
  
  
@@ -201,4 +201,25 @@ BUTTONS
  */
  .img{
  
+ }
+ 
+ /* 
+ TABLES
+ =================================== 
+ */ 
+ table{
+ 	overflow-x:auto;
+ 	
+ }
+ th{
+ 	background:#ccc;
+ }
+ tr{
+ 	min-height:50px;
+ }
+ tr:nth-child(even) {
+  	background-color: #f2f2f2
+ }
+ td{
+ 	min-width:50px;
  }
