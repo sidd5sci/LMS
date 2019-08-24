@@ -9,9 +9,27 @@ String baseUrl = ctx.getInitParameter("url");
 String viewPath = ctx.getInitParameter("viewPath");
 
 %>
+
+
+<div class="filter-box">
+
+	<form action="employee-appy-filter.htm" method="post">
+		<label>From</label>
+		<input type="text" name="from" id="from" autocomplete="off">
+		<label>To</label>
+		<input type="text" name="to" id="to" autocomplete="off">	
+		<label>Status</label>
+		<select name="status">
+			<option value="pending">pending</option>
+			<option value="approved">approved</option>
+		</select>
+		<button type="submit" class="form-btn">Apply filter</button>
+	</form>
+</div>
+
     <div class="data-tables">
-    
-    <table>
+    <button id="downloadReport" class="form-btn"> Download Report</button>
+    <table id="dataTable">
     
     	<thead>
     		<th>Leave Request</th>
@@ -57,9 +75,11 @@ String viewPath = ctx.getInitParameter("viewPath");
 						<td><%=dpt.getStatus()%></td>
 						<td>2</td>
 						<td>
-							<a href="<%=baseUrl%>admin-edit-leave.htm?id=<%=dpt.getId()%>">Edit</a> 
-							<a href="<%=baseUrl%>admin-remove-leave.htm?id=<%=dpt.getId()%>">Remove</a>
-							<a href="<%=baseUrl%>admin-leave-approve.htm?id=<%=dpt.getId()%>">Approve</a>
+							<% if(dpt.getStatus().equals("pending")){ %>
+								<a href="<%=baseUrl%>employee-edit-leave.htm?id=<%=dpt.getId()%>">Edit</a> 
+								<a href="<%=baseUrl%>employee-remove-leave.htm?id=<%=dpt.getId()%>">Cancel</a>
+							<%} %>
+							
 						</td>
 				</tr>
 			<%}%>

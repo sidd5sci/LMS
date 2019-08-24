@@ -250,10 +250,15 @@ FORMS
     transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
 }
 .form-btn{
+	cursor:pointer;
 	padding: 10px 15px;
     font-size: 15px;
     background: rgba(102, 51, 153, 1);
     color: #fff;
     box-shadow: 0px 0px 10px rgba(102, 51, 153, 0.3);
 }
+.disabled{
+	cursor:not-allowed;
 }
+
+

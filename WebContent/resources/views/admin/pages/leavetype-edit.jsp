@@ -7,18 +7,28 @@
  
 %>
     
-    <form action="admin-edit-leavetype-db.htm" method="post">
-    	<input type="hidden" name="id" value="<%=dpt.getId()%>"/>
-    	
-    	<div class="form-group">
-    		<label>LeaveType name</label>
-    		<input type="text" class="form-control" name="leaveTypeName" value="<%=dpt.getName()%>"/> 
+    <div class="row">
+    
+    	<div class="col-md-3"></div>
+    	<div class="col-md-6">
+    		<div class="alert-message"></div>
+	    	<form action="admin-edit-leavetype-db.htm" method="post">
+		    	<input type="hidden" name="id" value="<%=dpt.getId()%>"/>
+		    	
+		    	<div class="form-group">
+		    		<label>LeaveType name</label>
+		    		<input type="text" class="form-control" name="leaveTypeName" value="<%=dpt.getName()%>"/> 
+		    	</div>
+		    	<div class="form-group">
+		    		<label>LeaveType description</label>
+		    		<textarea class="form-control" name="leaveTypeDesc"><%=dpt.getDescription()%></textarea> 
+		    	</div>
+		
+		    	<button type="submit">Update LeaveType</button>
+		    </form>
+		    
     	</div>
-    	<div class="form-group">
-    		<label>LeaveType description</label>
-    		<textarea class="form-control" name="leaveTypeDesc"><%=dpt.getDescription()%></textarea> 
-    	</div>
-
-    	<button type="submit">Update LeaveType</button>
-    </form>
+    	<div class="col-md-3"></div>
+    </div>
+    
     

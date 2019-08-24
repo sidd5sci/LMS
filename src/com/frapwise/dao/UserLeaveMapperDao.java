@@ -86,5 +86,11 @@ public interface UserLeaveMapperDao extends Dao{
 	 * @return
 	 */
 	public List<UserLeaveMapper> getLeaveAvailibleByUserAndLeaveType(int uid,int leaveType);
+	/**
+	 * 
+	 * @param uid
+	 * @return
+	 */
+	public List<UserLeaveMapper> getLeaveByUser(int uid);
 	
 }

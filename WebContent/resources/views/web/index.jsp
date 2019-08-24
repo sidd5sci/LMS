@@ -23,10 +23,17 @@ String viewPath = ctx.getInitParameter("viewPath");
 
 	<jsp:include page ="includes/header.jsp"/>
 	
-	<div style="width:100%;height:90vh;background: linear-gradient(45deg, #4d2673, #05d0c6);">
+	<div style="    width: 100%;
+			    height: 89.6vh;
+			    background: linear-gradient(45deg, #4d2673, #05d0c6);
+			    overflow: hidden;
+			    float: left;
+			    position: absolute;
+			    top: 70px;
+    ">
 		<div class="container">	
 			
-			<div class="row">
+			<div class="" style="width:100%;display:flex;">
 			
 				<div class="col-md-6 ">
 					<p style="height:50px;">&nbsp;</p>

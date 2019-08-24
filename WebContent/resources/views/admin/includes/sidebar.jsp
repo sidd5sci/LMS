@@ -75,6 +75,7 @@ String viewPath = ctx.getInitParameter("viewPath");
 		 		<li><a href="admin-all-leaves.htm" ><img src="<%=baseUrl%>resources/uploads/minus.svg" /> &nbsp;&nbsp;All leaves</a></li>
 		 		<li><a href="admin-assign-leaves.htm" ><img src="<%=baseUrl%>resources/uploads/minus.svg" /> &nbsp;&nbsp;Assign Max leaves</a></li>
 		 		<li><a href="admin-max-leaves-status.htm" ><img src="<%=baseUrl%>resources/uploads/minus.svg" /> &nbsp;&nbsp;Max leaves status</a></li>
+				<li><a href="admin-upload-data.htm" ><img src="<%=baseUrl%>resources/uploads/minus.svg" /> &nbsp;&nbsp;Upload Data</a></li>
 		 	</ul>
  		</a>
  	</li>

@@ -27,7 +27,7 @@ String viewPath = ctx.getInitParameter("viewPath");
 	<jsp:include page="includes/sidebar.jsp"/>
 		
 		<div class="db-main-content">
-			<%=request.getAttribute("pageName")%>
+			<h2 class="display-2"><%=request.getAttribute("pageName")%></h2>
 			<jsp:include page="pages/${pageName}.jsp" />
 		</div>
 	
@@ -37,7 +37,12 @@ String viewPath = ctx.getInitParameter("viewPath");
 
 <script src="<%=baseUrl%>resources/js/jquery.3.4.1.js"></script>
 <script src="<%=baseUrl%>resources/js/jquery-ui.js"></script>
-<script src="<%=baseUrl%>resources/js/admin/main.js"></script>
+<script src="<%=baseUrl%>resources/js/employee/main.js"></script>
+<script src="<%=baseUrl%>resources/js/employee/create-leave.js"></script>
+<script src="<%=baseUrl%>resources/js/jquery.dataTables.min.js"></script>
+<script src="<%=baseUrl%>resources/js/jquery.table2excel.js"></script>
+
+
 <script>
 
 
@@ -74,6 +79,22 @@ String viewPath = ctx.getInitParameter("viewPath");
 
 
 
+	$('#dataTable').DataTable();
+	$("#downloadReport").on("click",function(){
+		
+		
+		$("#dataTable").table2excel({
+			    exclude: ".noExl",
+			    name: "Report",
+			    filename: "Report", //do not include extension
+			    fileext: ".xls", // file extension
+			    preserveColors: true,
+			    exclude_img: true,
+			    exclude_links: true,
+			    exclude_inputs: true
 
+
+		});
+	});
 </script>
 

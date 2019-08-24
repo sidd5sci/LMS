@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"
-        import="java.util.*,com.frapwise.entities.*,com.frapwise.models.*"%>
+        import="java.util.*,com.frapwise.entities.*,com.frapwise.utils.*,com.frapwise.models.*"%>
 
     
 <%
@@ -9,7 +9,8 @@ String baseUrl = ctx.getInitParameter("url");
 String viewPath = ctx.getInitParameter("viewPath");
 
 %>
-    <div class="data-tables">
+<button id="downloadReport" class="form-btn"> Download Report</button>
+    <div class="dataTables">
     
     <table>
     
@@ -55,9 +56,9 @@ String viewPath = ctx.getInitParameter("viewPath");
 						<td><%=u.getFname() %></td>
 						<td><%=dpt.getAppliedDate()%></td>
 						<td><%=dpt.getStatus()%></td>
-						<td>2</td>
+						<td><%=Util.getDays(dpt.getLeaveFrom(),dpt.getLeaveTo())%></td>
 						<td>
-							<a href="<%=baseUrl%>admin-edit-leave.htm?id=<%=dpt.getId()%>">Edit</a> 
+							<!-- <a href="<%=baseUrl%>admin-edit-leave.htm?id=<%=dpt.getId()%>">Edit</a> --> 
 							<a href="<%=baseUrl%>admin-remove-leave.htm?id=<%=dpt.getId()%>">Remove</a>
 							<a href="<%=baseUrl%>admin-leave-approve.htm?id=<%=dpt.getId()%>">Approve</a>
 						</td>

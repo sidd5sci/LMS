@@ -11,5 +11,5 @@
 
 
 <div class="alert" style="display:none;">
-	<p>Meaasge</p>
+	<p>${message}</p>
 </div>

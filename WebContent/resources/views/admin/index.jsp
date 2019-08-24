@@ -37,6 +37,8 @@ String viewPath = ctx.getInitParameter("viewPath");
 
 <script src="<%=baseUrl%>resources/js/jquery.3.4.1.js"></script>
 <script src="<%=baseUrl%>resources/js/jquery-ui.js"></script>
-<script src="<%=baseUrl%>resources/js/admin/main.js"></script>
+<script src="<%=baseUrl%>resources/js/jquery.dataTables.min.js"></script>
+<script src="<%=baseUrl%>resources/js/jquery.table2excel.js"></script>
 
+<script src="<%=baseUrl%>resources/js/admin/main.js"></script>
 

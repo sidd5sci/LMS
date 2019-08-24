@@ -58,6 +58,7 @@
  3: Buttons
  4: Images
  5: Tables
+ 6: Alerts
  */
  
  
@@ -223,3 +224,46 @@ BUTTONS
  td{
  	min-width:50px;
  }
+  /* 
+ TABLES
+ =================================== 
+ */ 
+ .alert-message{
+ 	display:none;
+ 	padding: 10px 15px;
+    font-size: 15px;
+    background: rgba(102, 51, 153, 1);
+    color: #fff;
+    box-shadow: 0px 0px 10px rgba(102, 51, 153, 0.3);
+ }
+ .alert{
+ 	
+    min-height: 17px;
+    min-width: 20px;
+    bottom: 70px;
+    position: absolute;
+    padding: 8px 15px;
+    font-size: 15px;
+    background: rgba(102, 51, 153, 1);
+    color: #fff;
+    box-shadow: 0px 0px 10px rgba(102, 51, 153, 0.3);
+    right: 50px;
+ }
+ .alert p{
+ 	color: #fff;
+ }
+ .danger{
+   	background:#9a0b03;
+ }
+ .success{
+ 	background:#198654;
+ }
+ 
+ 
+ .move{
+ 	cursour:e-resize;
+ }
+ .disabled{
+	cursor:not-allowed;
+}
+ 

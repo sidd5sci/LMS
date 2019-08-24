@@ -33,6 +33,7 @@ import com.frapwise.models.UserLeaveMapperModel;
 import com.frapwise.models.UserModel;
 import com.frapwise.utils.AES_Cipher;
 import com.frapwise.utils.RandomGenerator;
+import com.frapwise.utils.Util;
 
 /**
  * Servlet implementation class FrontController
@@ -56,9 +57,12 @@ public class FrontController extends HttpServlet {
 		private final static String EMPLOYEE_ADD_LEAVE_DB	 = "employee-add-leave-db.htm";
 		private final static String EMPLOYEE_ALL_LEAVES		 = "employee-all-leaves.htm";
 		private final static String EMPLOYEE_STATUS_LEAVE	 = "employee-status-leave.htm";
+		private final static String EMPLOYEE_EDIT_LEAVE		 = "employee-edit-leave.htm";
+		private final static String EMPLOYEE_EDIT_LEAVE_DB	 = "employee-edit-leave-db.htm";
+		private final static String EMPLOYEE_REMOVE_LEAVE	 = "employee-remove-leave.htm";
 		private final static String EMPLOYEE_PENDING_LEAVE	 = "employee-pending-leave.htm";
 		private final static String EMPLOYEE_APROVED_LEAVE	 = "employee-aproved-leave.htm";
-	
+		private final static String EMPLOYEE_APPLY_FILTERS	 = "employee-appy-filter.htm";
 	// Admin routes
 	private final static String ADMIN_DASHBOARD 		= "admin-dashboard.htm";
 		// department
@@ -83,19 +87,20 @@ public class FrontController extends HttpServlet {
 		private final static String ADMIN_EDIT_EMPLOYEE_DB	 = "admin-edit-employee-db.htm";
 		private final static String ADMIN_REMOVE_EMPLOYEE	 = "admin-remove-employee.htm";
 		private final static String ADMIN_EMPLOYEE_FILTER	 = "";
-		private final static String ADMIN_ADD_EL_CL			 = "";
 		// leave
 		private final static String ADMIN_ADD_LEAVE 		 = "admin-add-leave.htm";
 		private final static String ADMIN_ADD_LEAVE_DB 		 = "admin-add-leave-db.htm";
 		private final static String ADMIN_ALL_LEAVE			 = "admin-all-leaves.htm";
 		private final static String ADMIN_TODAYS_LEAVES		 = "admin-today-leaves.htm";
-		private final static String ADMIN_LEAVE_APPROVAL 	 = "admin-approve-leave.htm";
-		private final static String ADMIN_ALL_LEAVE_FILTER   = "";
+		private final static String ADMIN_LEAVE_APPROVAL 	 = "admin-leave-approve.htm";
+		private final static String ADMIN_LEAVE_REJECT		 = "admin-reject-leave.htm";
 		private final static String ADMIN_ASSIGN_LEAVES		 = "admin-assign-leaves.htm";
 		private final static String ADMIN_ASSIGN_LEAVES_DB	 = "admin-assign-leave-db.htm";
+		private final static String ADMIN_STATUS_LEAVE		 = "admin-max-leaves-status.htm";
+		private final static String ADMIN_APPLY_FILTERS		 = "admin-apply-filter.htm";
+		private final static String ADMIN_UPLOAD_FILE		 = "admin-upload-data.htm";
 		
-    
-    /**
+	/**
      * @see HttpServlet#HttpServlet()
      */
     public FrontController() {
@@ -632,9 +637,9 @@ public class FrontController extends HttpServlet {
 						UserLeaveMapper ulm = new UserLeaveMapper();
 						ulm.setUid(id);
 						ulm.setLeaveTypeId(lt.getId());
-						ulm.setLeaveMax(0);
+						ulm.setLeaveMax(Integer.parseInt(lt.getDescription()) );
 						ulm.setLeaveTaken(0);
-						ulm.setLeaveAvailible(0);
+						ulm.setLeaveAvailible(Integer.parseInt(lt.getDescription()));
 						ulm.setTimeDuration(0);
 						ulm.setLeaveFrom(new SimpleDateFormat("dd-M-yy").format(new java.util.Date()) );
 						ulm.setLeaveTo(new SimpleDateFormat("dd-M-yy").format(new java.util.Date()));
@@ -764,9 +769,13 @@ public class FrontController extends HttpServlet {
 				out.println("419 Session Expired ... ");
 			}else {
 				UserModel userModel = new UserModel();							
+				UserLeaveMapperModel ulmModel = new UserLeaveMapperModel();
 				int flag = 0;
+				
 				try {
 					flag = (int) userModel.remove(Integer.parseInt(request.getParameter("id")));
+					ulmModel.removeByUid(Integer.parseInt(request.getParameter("id")));
+				
 				} catch (Exception e) {
 					request.setAttribute("message", "Some error occured !!");
 					e.printStackTrace();
@@ -819,6 +828,7 @@ public class FrontController extends HttpServlet {
 				
 				LeaveModel leaveModel = new LeaveModel();
 				Leave l = new Leave();
+				UserLeaveMapperModel ulmModel = new UserLeaveMapperModel();
 				
 				l.setUserId(Integer.parseInt(request.getParameter("user")) );
 				l.setLeaveTypeId(Integer.parseInt(request.getParameter("leaveType")));
@@ -826,10 +836,14 @@ public class FrontController extends HttpServlet {
 				l.setLeaveFrom(request.getParameter("from"));
 				l.setLeaveTo(request.getParameter("to"));
 				l.setTimeOffType(Integer.parseInt(request.getParameter("timeOffType")) );				
-				
+				int duration = Integer.parseInt(request.getParameter("duration"));
 				System.out.println(l.toString());
 				try {
-					leaveModel.add(l);
+					Integer id = (Integer)leaveModel.add(l);
+					if(id != null) {
+						ulmModel.updateLeaveByUserAndLeaveType(Integer.parseInt(request.getParameter("user"))
+																,l.getLeaveTypeId(),duration,"+");
+					}
 				} catch (UserException e) {
 					// TODO Auto-generated catch block
 					request.setAttribute("message", "Leave data is empty");
@@ -859,6 +873,8 @@ public class FrontController extends HttpServlet {
 				sess = sessModel.getSession(ssid);
 								
 				LeaveModel leaveModel = new LeaveModel(); 
+				UserModel userModel = new UserModel();
+				request.setAttribute("users", userModel.getAll());
 				try {
 					request.setAttribute("leaves", leaveModel.getAll());
 				} catch (Exception e) {
@@ -960,6 +976,130 @@ public class FrontController extends HttpServlet {
 				
 				response.sendRedirect(ADMIN_DASHBOARD);
 			}
+		}else if(requestUrl.endsWith(ADMIN_LEAVE_APPROVAL)) {
+			Cookie[] cookies = request.getCookies();
+			String ssid = "";
+			for(Cookie c:cookies) {
+				if(c.getName().equals("ssid")) {
+					ssid = c.getValue();
+				}
+			}
+			if(ssid.equals("")) {
+				out.println("419 Session Expired ... ");
+			}else {
+				LeaveModel leaveModel = new LeaveModel();
+				int flag = leaveModel.approve(Integer.parseInt(request.getParameter("id")));
+				
+				response.sendRedirect(ADMIN_ALL_LEAVE);
+			}	
+			
+		}
+		else if(requestUrl.endsWith(ADMIN_LEAVE_REJECT)) {
+			Cookie[] cookies = request.getCookies();
+			String ssid = "";
+			for(Cookie c:cookies) {
+				if(c.getName().equals("ssid")) {
+					ssid = c.getValue();
+				}
+			}
+			if(ssid.equals("")) {
+				out.println("419 Session Expired ... ");
+			}else {
+				LeaveModel leaveModel = new LeaveModel();
+				UserLeaveMapperModel ulmModel = new UserLeaveMapperModel();
+				Leave leave = leaveModel.getLeaveById(Integer.parseInt(request.getParameter("id")));
+				int flag = leaveModel.reject(Integer.parseInt(request.getParameter("id")));
+				if(flag==1) {
+					ulmModel.updateLeaveByUserAndLeaveType(leave.getUserId(), leave.getLeaveTypeId(), (int)Util.getDays(leave.getLeaveFrom(),leave.getLeaveTo()), "-");
+				}
+				response.sendRedirect(ADMIN_ALL_LEAVE);
+			}	
+			
+		}else if(requestUrl.endsWith(ADMIN_STATUS_LEAVE)) {
+			Cookie[] cookies = request.getCookies();
+			String ssid = "";
+			for(Cookie c:cookies) {
+				if(c.getName().equals("ssid")) {
+					ssid = c.getValue();
+				}
+			}
+			if(ssid.equals("")) {
+				out.println("419 Session Expired ... ");
+			}
+			else {
+				
+				
+				UserLeaveMapperModel ulmModel = new UserLeaveMapperModel();
+				request.setAttribute("leaveMapper", ulmModel.getAll());
+				LeaveTypeModel ltModel = new LeaveTypeModel();
+				request.setAttribute("leavetypes", ltModel.getAll()); 
+				
+				request.setAttribute("pageName", "leave-status");
+				RequestDispatcher rd = request.getRequestDispatcher(path+"admin/index.jsp");
+				rd.forward(request, response);
+			}
+		}
+		else if(requestUrl.endsWith(ADMIN_APPLY_FILTERS)) {
+			Cookie[] cookies = request.getCookies();
+			String ssid = "";
+			for(Cookie c:cookies) {
+				if(c.getName().equals("ssid")) {
+					ssid = c.getValue();
+				}
+			}
+			if(ssid.equals("")) {
+				out.println("419 Session Expired ... ");
+			}
+			else {
+				// get the session data from database
+				Session sess = new Session();
+				SessionModel sessModel = new SessionModel(); 
+				sess = sessModel.getSession(ssid);
+				
+				UserModel userModel = new UserModel();
+				request.setAttribute("users", userModel.getAll());
+				
+				String from = request.getParameter("from");
+				String to = request.getParameter("to");
+				String status = request.getParameter("status");
+				Integer uid = Integer.parseInt(request.getParameter("uid"));
+				
+				LeaveModel leaveModel = new LeaveModel(); 
+				try {
+					request.setAttribute("leaves", leaveModel.getLeaveByFilter(from,to,status,uid));
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					request.setAttribute("message","Some error occured");
+					e.printStackTrace();
+				}
+				request.setAttribute("pageName", "leave-all");
+				RequestDispatcher rd = request.getRequestDispatcher(path+"admin/index.jsp");
+				rd.forward(request, response);
+				
+			}
+			
+		}else if(requestUrl.endsWith(ADMIN_UPLOAD_FILE)) {
+			Cookie[] cookies = request.getCookies();
+			String ssid = "";
+			for(Cookie c:cookies) {
+				if(c.getName().equals("ssid")) {
+					ssid = c.getValue();
+				}
+			}
+			if(ssid.equals("")) {
+				out.println("419 Session Expired ... ");
+			}
+			else {
+				// get the session data from database
+				Session sess = new Session();
+				SessionModel sessModel = new SessionModel(); 
+				sess = sessModel.getSession(ssid);
+				
+				request.setAttribute("pageName", "leave-upload");
+				RequestDispatcher rd = request.getRequestDispatcher(path+"admin/index.jsp");
+				rd.forward(request, response);
+				
+			}
 		}
 		
 //		EMPOYEE
@@ -999,6 +1139,9 @@ public class FrontController extends HttpServlet {
 				request.setAttribute("leavetypes", ltModel.getAll()); 
 				UserModel userModel = new UserModel();
 				request.setAttribute("user", userModel.getUserById((Integer)session.getAttribute("uid"))); 
+				UserLeaveMapperModel ulmModel = new UserLeaveMapperModel();
+				UserLeaveMapper ulm = new UserLeaveMapper();
+				
 				request.setAttribute("pageName", "leave-create");
 				RequestDispatcher rd = request.getRequestDispatcher(path+"employee/index.jsp");
 				rd.forward(request, response);
@@ -1019,9 +1162,12 @@ public class FrontController extends HttpServlet {
 				Session sess = new Session();
 				SessionModel sessModel = new SessionModel(); 
 				sess = sessModel.getSession(ssid);
+				int uid = (int) session.getAttribute("uid");
 				
 				LeaveModel leaveModel = new LeaveModel();
 				Leave l = new Leave();
+				UserLeaveMapperModel ulmModel = new UserLeaveMapperModel();
+				UserLeaveMapper ulm = new UserLeaveMapper();
 				
 				l.setUserId(Integer.parseInt(request.getParameter("user")) );
 				l.setLeaveTypeId(Integer.parseInt(request.getParameter("leaveType")));
@@ -1029,10 +1175,18 @@ public class FrontController extends HttpServlet {
 				l.setLeaveFrom(request.getParameter("from"));
 				l.setLeaveTo(request.getParameter("to"));
 				l.setTimeOffType(Integer.parseInt(request.getParameter("timeOffType")) );				
+				int duration = Integer.parseInt(request.getParameter("duration"));
+				
+				
 				
 				System.out.println(l.toString());
+				Integer id = 0;
 				try {
-					leaveModel.add(l);
+					id = (Integer) leaveModel.add(l);
+					if(id != null) {
+						ulmModel.updateLeaveByUserAndLeaveType(uid,l.getLeaveTypeId(),duration,"+");
+					}
+					
 				} catch (UserException e) {
 					// TODO Auto-generated catch block
 					request.setAttribute("message", "Leave data is empty");
@@ -1040,8 +1194,8 @@ public class FrontController extends HttpServlet {
 					e.printStackTrace();
 				}
 				
-				response.sendRedirect(EMPLOYEE_DASHBOARD);
-					
+				//response.sendRedirect(EMPLOYEE_DASHBOARD);
+				out.println(id);
 				
 			}
 		}
@@ -1075,7 +1229,158 @@ public class FrontController extends HttpServlet {
 				rd.forward(request, response);
 				
 			}
+			
+		}else if(requestUrl.endsWith(EMPLOYEE_EDIT_LEAVE)) {
+			Cookie[] cookies = request.getCookies();
+			String ssid = "";
+			for(Cookie c:cookies) {
+				if(c.getName().equals("ssid")) {
+					ssid = c.getValue();
+				}
+			}
+			if(ssid.equals("")) {
+				out.println("419 Session Expired ... ");
+			}
+			else {
+				
+				LeaveModel lModel = new LeaveModel();
+				request.setAttribute("leave", lModel.getLeaveById(Integer.parseInt(request.getParameter("id"))) );
+				LeaveTypeModel ltModel = new LeaveTypeModel();
+				request.setAttribute("leavetypes", ltModel.getAll()); 
+				UserModel userModel = new UserModel();
+				request.setAttribute("user", userModel.getUserById((Integer)session.getAttribute("uid"))); 
+				
+				request.setAttribute("pageName", "leave-edit");
+				RequestDispatcher rd = request.getRequestDispatcher(path+"employee/index.jsp");
+				rd.forward(request, response);
+				
+			}
+			
 		}
+		else if(requestUrl.endsWith(EMPLOYEE_EDIT_LEAVE_DB)) {
+			Cookie[] cookies = request.getCookies();
+			String ssid = "";
+			for(Cookie c:cookies) {
+				if(c.getName().equals("ssid")) {
+					ssid = c.getValue();
+				}
+			}
+			if(ssid.equals("")) {
+				out.println("419 Session Expired ... ");
+			}
+			else {
+				
+				LeaveModel lModel = new LeaveModel();
+				request.setAttribute("leave", lModel.getLeaveById(Integer.parseInt(request.getParameter("id"))) );
+				LeaveTypeModel ltModel = new LeaveTypeModel();
+				request.setAttribute("leavetypes", ltModel.getAll()); 
+				UserModel userModel = new UserModel();
+				request.setAttribute("user", userModel.getUserById((Integer)session.getAttribute("uid"))); 
+				
+				request.setAttribute("pageName", "leave-edit");
+				RequestDispatcher rd = request.getRequestDispatcher(path+"employee/index.jsp");
+				rd.forward(request, response);
+				
+			}
+			
+		}
+		else if(requestUrl.endsWith(EMPLOYEE_REMOVE_LEAVE)) {
+			Cookie[] cookies = request.getCookies();
+			String ssid = "";
+			for(Cookie c:cookies) {
+				if(c.getName().equals("ssid")) {
+					ssid = c.getValue();
+				}
+			}
+			if(ssid.equals("")) {
+				out.println("419 Session Expired ... ");
+			}	
+			else {
+				
+				LeaveModel leaveModel = new LeaveModel();
+				
+				
+				
+				int flag = 0;
+				try {
+					flag = (int) leaveModel.remove(Integer.parseInt(request.getParameter("id")));
+				} catch (Exception e) {
+					request.setAttribute("message", "Some error occured !!");
+					e.printStackTrace();
+				}
+				
+				if(flag == 1) {
+					request.setAttribute("message", "Leave removed successfully ");
+					response.sendRedirect(EMPLOYEE_DASHBOARD);
+				}
+				
+			}
+			
+		}
+		
+		
+		else if(requestUrl.endsWith(EMPLOYEE_STATUS_LEAVE)) {
+			Cookie[] cookies = request.getCookies();
+			String ssid = "";
+			for(Cookie c:cookies) {
+				if(c.getName().equals("ssid")) {
+					ssid = c.getValue();
+				}
+			}
+			if(ssid.equals("")) {
+				out.println("419 Session Expired ... ");
+			}
+			else {
+				
+				
+				UserLeaveMapperModel ulmModel = new UserLeaveMapperModel();
+				request.setAttribute("leaveMapper", ulmModel.getLeaveByUser((Integer)session.getAttribute("uid")));
+				LeaveTypeModel ltModel = new LeaveTypeModel();
+				request.setAttribute("leavetypes", ltModel.getAll()); 
+				
+				request.setAttribute("pageName", "leave-status");
+				RequestDispatcher rd = request.getRequestDispatcher(path+"employee/index.jsp");
+				rd.forward(request, response);
+			}
+		}
+		else if(requestUrl.endsWith(EMPLOYEE_APPLY_FILTERS)) {
+			Cookie[] cookies = request.getCookies();
+			String ssid = "";
+			for(Cookie c:cookies) {
+				if(c.getName().equals("ssid")) {
+					ssid = c.getValue();
+				}
+			}
+			if(ssid.equals("")) {
+				out.println("419 Session Expired ... ");
+			}
+			else {
+				// get the session data from database
+				Session sess = new Session();
+				SessionModel sessModel = new SessionModel(); 
+				sess = sessModel.getSession(ssid);
+				
+				String from = request.getParameter("from");
+				String to = request.getParameter("to");
+				String status = request.getParameter("status");
+				Integer uid = (Integer)session.getAttribute("uid");
+				
+				LeaveModel leaveModel = new LeaveModel(); 
+				try {
+					request.setAttribute("leaves", leaveModel.getLeaveByFilter(from,to,status,uid));
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					request.setAttribute("message","Some error occured");
+					e.printStackTrace();
+				}
+				request.setAttribute("pageName", "leave-list");
+				RequestDispatcher rd = request.getRequestDispatcher(path+"employee/index.jsp");
+				rd.forward(request, response);
+				
+			}
+			
+		}
+		
 		
 		
 		
@@ -1092,5 +1397,9 @@ public class FrontController extends HttpServlet {
 	
 	
 	
+	
+	
+	
+
 	
 }

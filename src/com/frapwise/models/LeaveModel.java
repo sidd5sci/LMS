@@ -20,12 +20,14 @@ public class LeaveModel implements LeaveDao{
 	private Connection conn;
 	private PreparedStatement prep;
 	private ResultSet result;
-	
+	private Statement smt;
 
 	// Setters
 	private final static String ADD_LEAVE	 			= "INSERT INTO leaves(id,user_id,department_id,leave_type_id,leave_from,leave_to,applied_date,time_off_type,status,approval) VALUES (null,?,?,?,?,?,?,?,?,?)";
 	private final static String REMOVE_LEAVE			= "DELETE FROM leaves WHERE id = ?";
 	private final static String UPDATE_LEAVE			= "UPDATE leaves SET user_id = ?, department_id = ?, leave_type_id = ?, leave_from = ?, leave_to = ?, applied_date = ?, time_off_type = ?, status = ?, approval = ? WHERE id = ?";
+	private final static String APPROVE_LEAVE			= "UPDATE leaves SET status = ? WHERE id = ?";
+	private final static String REJECT_LEAVE			= "UPDATE leaves SET status = ? WHERE id = ?";
 	// getters
 	private final static String GET_LEAVE_BY_ID 		= "SELECT * FROM leaves WHERE id = ?";
 	private final static String GET_ALL_LEAVES			= "SELECT * FROM leaves";
@@ -33,6 +35,7 @@ public class LeaveModel implements LeaveDao{
 	private final static String GET_LEAVE_BY_APPLIED 	= "SELECT * FROM leaves WHERE applied_from = ?";
 	private final static String GET_LEAVE_BY_DATES 		= "SELECT * FROM leaves WHERE leave_from > ? and leave_to < ?";
 	private final static String GET_LEAVE_BY_USER		= "SELECT * FROM leaves WHERE user_id = ?";
+	private final static String GET_LEAVE_BY_USER_DATE	= "SELECT * FROM leaves WHERE user_id = ? and leave_from = ? or leave_to ";
 	private final static String GET_LEAVE_BY_DEPARTMENT	= "SELECT * FROM leaves WHERE department_id = ?";
 	private final static String GET_LEAVE_BY_LEAVETYPE	= "SELECT * FROM leaves WHERE leave_type_id = ?";
 	
@@ -52,7 +55,10 @@ public class LeaveModel implements LeaveDao{
 			this.prep = this.conn.prepareStatement(ADD_LEAVE,Statement.RETURN_GENERATED_KEYS);
 			this.setParam(this.prep, l);
 			flag = this.prep.executeUpdate();
-	
+			this.result = this.prep.getGeneratedKeys();
+			if(result.next()) {
+				flag = result.getInt(1);
+			}
 		}catch(SQLException e) {
 			e.printStackTrace();
 		}
@@ -109,10 +115,91 @@ public class LeaveModel implements LeaveDao{
 		return leaves;
 	}
 	
+	public List<Leave> getLeaveByFilter(String from,String to,String status,Integer uid) throws ParseException{
+	
+		SimpleDateFormat format = new SimpleDateFormat("dd-M-yy");
+		StringBuilder query = new StringBuilder();
+		query.append("SELECT * FROM leaves WHERE 0=0");
+		
+		
+		if( !from.equals("") && from != null) {
+			java.util.Date dfrom = format.parse(from);
+			java.sql.Date sqlFrom = new java.sql.Date(dfrom.getTime());
+			query.append(" AND leave_from >= '"+sqlFrom+"'");	
+		}
+		if( !to.equals("") && to != null) {
+			java.util.Date dto = format.parse(to);
+			java.sql.Date sqlTo = new java.sql.Date(dto.getTime());
+			query.append(" AND leave_to <= '"+sqlTo+"'");
+		}
+		if( !status.equals("") && status != null ) {
+			query.append(" AND status = '"+status+"'");
+		}
+		if( uid != 0 && uid != null) {
+			query.append(" AND user_id = "+uid);
+		}
+		
+		
+		System.out.println("F:"+from+"\n"+query);
+		List<Leave> leaves = new ArrayList<Leave>();
+		try {
+			this.smt = this.conn.createStatement();
+			this.result = this.smt.executeQuery(query.toString());
+			while(this.result.next()) {
+				Leave l = new Leave();
+				this.setLeave(l, this.result);
+				leaves.add(l);
+			}
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return leaves;
+		
+		
+	}
+	public int approve(int id) {
+		try {
+			this.prep = this.conn.prepareStatement(APPROVE_LEAVE);
+			this.prep.setString(1, "approved");
+			this.prep.setInt(2, id);
+			
+			id = this.prep.executeUpdate();
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return id;
+	}
+	
+	public int reject(int id) {
+		try {
+			this.prep = this.conn.prepareStatement(REJECT_LEAVE);
+			this.prep.setString(1, "reject");
+			this.prep.setInt(2, id);
+			
+			id = this.prep.executeUpdate();
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return id;
+	}
+	
 	@Override
 	public Leave getLeaveById(int id) {
 		// TODO Auto-generated method stub
-		return null;
+		Leave leave = new Leave();
+		try {
+			this.prep = this.conn.prepareStatement(GET_LEAVE_BY_ID);
+			this.prep.setInt(1, id);
+			
+			this.result = this.prep.executeQuery();
+			while(this.result.next()) {
+				this.setLeave(leave, this.result);
+			}
+			
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return leave;
 	}
 
 	@Override
@@ -148,7 +235,26 @@ public class LeaveModel implements LeaveDao{
 		}
 		return leaves;
 	}
-
+	public List<Leave> getLeavesByUserAndDate(int uid) {
+		// TODO Auto-generated method stub
+		
+		List<Leave> leaves = new ArrayList<Leave>();
+		try {
+			this.prep = this.conn.prepareStatement(GET_LEAVE_BY_USER);
+		
+			this.prep.setInt(1, uid);
+			
+			this.result = this.prep.executeQuery();
+			while(this.result.next()) {
+				Leave l = new Leave();
+				this.setLeave(l, this.result);
+				leaves.add(l);
+			}
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return leaves;
+	}
 	
 	@Override
 	public List<Leave> getLeavesByAppliedDate(String date) throws ParseException {

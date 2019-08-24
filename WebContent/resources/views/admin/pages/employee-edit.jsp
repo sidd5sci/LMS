@@ -10,7 +10,7 @@
     
     	<div class="col-md-3"></div>
     	<div class="col-md-6">
-    	
+    		<div class="alert-message"></div>
     		<form action="admin-edit-employee-db.htm" method="post">
     		
     			<div class="form-group">
@@ -64,7 +64,7 @@
 		    	</div>
 		    	<input type="hidden" name="status" value="enabled"/>
 		    	<input type="hidden" name="id" value="<%=u.getId() %>"/>
-		    	<button type="submit">Update employee</button>
+		    	<button type="submit" class="form-btn">Update employee</button>
     		</form>
     	
     	</div>

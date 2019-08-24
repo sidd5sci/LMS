@@ -26,7 +26,10 @@ public class UserLeaveMapperModel implements UserLeaveMapperDao{
 	// Setters
 	private final static String ADD_LEAVE	 			= "INSERT INTO user_leave_maper(id,uid,leave_type_id,leave_max,leave_taken,leave_availible,time_duration,assigned_from,assigned_to) VALUES (null,?,?,?,?,?,?,?,?)";
 	private final static String REMOVE_LEAVE			= "DELETE FROM user_leave_maper WHERE id = ?";
-	private final static String UPDATE_LEAVE			= "UPDATE user_leave_maper SET id = ?, uid = ?, leave_type_id = ?, leave_max = ?, leave_taken = ?, leave_availible = ?, time_duration = ?, assigned_from,assigned_to = ? WHERE id = ?";
+	private final static String UPDATE_LEAVE			= "UPDATE user_leave_maper SET uid = ?, leave_type_id = ?, leave_max = ?, leave_taken = ?, leave_availible = ?, time_duration = ?, assigned_from,assigned_to = ? WHERE id = ?";
+	private final static String REMOVE_LEAVE_BY_UID		= "DELETE FROM user_leave_maper WHERE uid = ?";
+	private final static String UPDATE_LEAVE_N_BY_UID_L = "UPDATE user_leave_maper SET leave_taken = leave_taken - ?, leave_availible = leave_availible + ? WHERE uid = ? and leave_type_id = ? ";
+	private final static String UPDATE_LEAVE_P_BY_UID_L	= "UPDATE user_leave_maper SET leave_taken = leave_taken + ?, leave_availible = leave_availible - ? WHERE uid = ? and leave_type_id = ? ";
 	// getters
 	private final static String GET_LEAVE_BY_ID 		= "SELECT * FROM user_leave_maper WHERE id = ?";
 	private final static String GET_ALL_LEAVES			= "SELECT * FROM user_leave_maper";
@@ -74,7 +77,18 @@ public class UserLeaveMapperModel implements UserLeaveMapperDao{
 		}
 		return flag;
 	}
-
+	public int removeByUid(int uid) {
+		
+		Integer flag = 0;
+		try {
+			this.prep = this.conn.prepareStatement(REMOVE_LEAVE_BY_UID);
+			this.prep.setInt(1, uid);
+			flag = this.prep.executeUpdate();
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return flag;
+	}
 	@Override
 	public Object update(Object o) throws Exception {
 		// TODO Auto-generated method stub
@@ -145,6 +159,29 @@ public class UserLeaveMapperModel implements UserLeaveMapperDao{
 		return 0;
 	}
 
+	public int updateLeaveByUserAndLeaveType(int uid,int leaveType,int duration,String opration) {
+		
+		Integer flag = 0;
+		try {
+			if(opration.equals("+")) {
+				this.prep = this.conn.prepareStatement(UPDATE_LEAVE_P_BY_UID_L);
+			}else {
+				this.prep = this.conn.prepareStatement(UPDATE_LEAVE_N_BY_UID_L);
+			}
+			
+			this.prep.setInt(1, duration);
+			this.prep.setInt(2, duration);
+			this.prep.setInt(3, uid);
+			this.prep.setInt(4, leaveType);
+			
+			flag = this.prep.executeUpdate();
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return flag;
+	}
+	
+	
 	@Override
 	public List<UserLeaveMapper> getLeaveMaxByUser(int uid) {
 		// TODO Auto-generated method stub
@@ -163,7 +200,26 @@ public class UserLeaveMapperModel implements UserLeaveMapperDao{
 		}
 		return leaves;
 	}
-
+	
+	@Override
+	public List<UserLeaveMapper> getLeaveByUser(int uid) {
+		// TODO Auto-generated method stub
+		List<UserLeaveMapper> leaves = new ArrayList<UserLeaveMapper>();
+		try {
+			this.prep = this.conn.prepareStatement(GET_LEAVE_BY_USER);
+			this.prep.setInt(1, uid);
+			this.result = this.prep.executeQuery();
+			while(this.result.next()) {
+				UserLeaveMapper l = new UserLeaveMapper();
+				this.setLeave(l, this.result);
+				leaves.add(l);
+			}
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return leaves;
+	}
+	
 	@Override
 	public List<UserLeaveMapper> getLeaveTakenByUser(int uid) {
 		// TODO Auto-generated method stub
@@ -222,9 +278,9 @@ public class UserLeaveMapperModel implements UserLeaveMapperDao{
 		l.setLeaveMax(rs.getInt("leave_max"));
 		l.setLeaveTaken(rs.getInt("leave_taken"));
 		l.setLeaveAvailible(rs.getInt("leave_availible"));
-		l.setTimeDuration(rs.getInt("leave_duration"));
-		l.setLeaveFrom(rs.getString("leave_from"));
-		l.setLeaveTo(rs.getString("leave_to"));
+		l.setTimeDuration(rs.getInt("time_duration"));
+		l.setLeaveFrom(rs.getString("assigned_from"));
+		l.setLeaveTo(rs.getString("assigned_to"));
 		l.setCreatedAt(rs.getString("created_at"));
 	}
 	
