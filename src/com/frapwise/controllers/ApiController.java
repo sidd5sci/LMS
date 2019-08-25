@@ -126,8 +126,10 @@ public class ApiController extends HttpServlet implements ApiRoutes{
 //						flag = 2;
 //					}
 				}
-							
-				
+				if(flag != 1) {
+					break;
+				}			
+				System.out.println(flag);
 				
 			}
 			

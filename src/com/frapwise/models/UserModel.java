@@ -9,33 +9,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.frapwise.dao.Queries;
 import com.frapwise.dao.UserDao;
 import com.frapwise.db.DB;
 import com.frapwise.entities.User;
 import com.frapwise.exceptions.UserException;
 
-public class UserModel implements UserDao{
+public class UserModel implements UserDao,Queries{
 	
 	private Connection conn;
 	private PreparedStatement prep;
 	private ResultSet result;
 
-	// Setters
-	private final static String AUTHENTICATE 			= "SELECT * FROM users WHERE email = ? and password = ?";
-	private final static String REGISTER_USER 			= "INSERT INTO users(id,fname,lname,username,home_office,department_id,email,password,role,status) VALUES (null,?,?,?,?,?,?,?,?,?)";
-	private final static String ENABLE_USER 			= "UPDATE users SET status = ? , updated_at = ? WHERE id = ?";
-	private final static String DISABLE_USER 			= "UPDATE users SET status = ? , updated_at = ? WHERE id = ?";
-	private final static String UPDATE_PASSWORD 		= "UPDATE users SET password = ? , updated_at = ? WHERE id =?";
-	private final static String REMOVE_USER				= "DELETE FROM users WHERE id = ?";
-	private final static String UPDATE_USER				= "UPDATE users SET fname = ?, lname = ?, username = ?, home_office = ?, department_id = ?, email = ?, password = ?, role = ?, status = ? WHERE id = ?";
-	// getters
-	private final static String GET_USER_BY_ID 			= "SELECT * FROM users WHERE id = ?";
-	private final static String GET_ALL_USER 			= "SELECT * FROM users";
-	private final static String GET_USER_BY_ROLE 		= "SELECT * FROM users WHERE role = ?";
-	private final static String GET_USER_BY_STATUS 		= "SELECT * FROM users WHERE status = ?";
-	private final static String GET_USER_BY_DEPARTMENT	= "SELECT * FROM users WHERE department_id = ?";
-	private final static String GET_DISABLED_USER 		= "SELECT * FROM users WHERE status = 'disbaled'";
-	
 
 	
 	public UserModel(){

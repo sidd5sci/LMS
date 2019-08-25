@@ -11,34 +11,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.frapwise.dao.LeaveDao;
+import com.frapwise.dao.Queries;
 import com.frapwise.db.DB;
 import com.frapwise.entities.Leave;
 import com.frapwise.entities.User;
 import com.frapwise.exceptions.LeaveException;
 
-public class LeaveModel implements LeaveDao{
+public class LeaveModel implements LeaveDao,Queries{
 
 	private Connection conn;
 	private PreparedStatement prep;
 	private ResultSet result;
 	private Statement smt;
 
-	// Setters
-	private final static String ADD_LEAVE	 			= "INSERT INTO leaves(id,user_id,department_id,leave_type_id,leave_from,leave_to,applied_date,time_off_type,status,approval) VALUES (null,?,?,?,?,?,?,?,?,?)";
-	private final static String REMOVE_LEAVE			= "DELETE FROM leaves WHERE id = ?";
-	private final static String UPDATE_LEAVE			= "UPDATE leaves SET user_id = ?, department_id = ?, leave_type_id = ?, leave_from = ?, leave_to = ?, applied_date = ?, time_off_type = ?, status = ?, approval = ? WHERE id = ?";
-	private final static String APPROVE_LEAVE			= "UPDATE leaves SET status = ? WHERE id = ?";
-	private final static String REJECT_LEAVE			= "UPDATE leaves SET status = ? WHERE id = ?";
-	// getters
-	private final static String GET_LEAVE_BY_ID 		= "SELECT * FROM leaves WHERE id = ?";
-	private final static String GET_ALL_LEAVES			= "SELECT * FROM leaves";
-	private final static String GET_LEAVE_BY_TODAY		= "SELECT * FROM leaves WHERE leave_from = ?"; 
-	private final static String GET_LEAVE_BY_APPLIED 	= "SELECT * FROM leaves WHERE applied_from = ?";
-	private final static String GET_LEAVE_BY_DATES 		= "SELECT * FROM leaves WHERE leave_from > ? and leave_to < ?";
-	private final static String GET_LEAVE_BY_USER		= "SELECT * FROM leaves WHERE user_id = ?";
-	private final static String GET_LEAVE_BY_USER_DATE	= "SELECT * FROM leaves WHERE user_id = ? and leave_from = ? or leave_to ";
-	private final static String GET_LEAVE_BY_DEPARTMENT	= "SELECT * FROM leaves WHERE department_id = ?";
-	private final static String GET_LEAVE_BY_LEAVETYPE	= "SELECT * FROM leaves WHERE leave_type_id = ?";
 	
 
 	public LeaveModel(){

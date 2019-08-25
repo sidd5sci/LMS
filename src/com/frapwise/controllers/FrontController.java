@@ -842,7 +842,7 @@ public class FrontController extends HttpServlet implements WebRoutes{
 				l.setLeaveFrom(request.getParameter("from"));
 				l.setLeaveTo(request.getParameter("to"));
 				l.setTimeOffType(Integer.parseInt(request.getParameter("timeOffType")) );				
-				//int duration = Integer.parseInt(request.getParameter("duration"));
+				
 				int duration = (int) Util.getDaysNoWeekendsJquery(l.getLeaveFrom(), l.getLeaveTo());
 				System.out.println(l.toString());
 				
@@ -992,7 +992,31 @@ public class FrontController extends HttpServlet implements WebRoutes{
 				response.addCookie(cookie);
 				response.sendRedirect(ADMIN_DASHBOARD);
 			}
-		}else if(requestUrl.endsWith(ADMIN_LEAVE_APPROVAL)) {
+		}
+		else if(requestUrl.endsWith(ADMIN_EDIT_MAX_LEAVE)) {
+			Cookie[] cookies = request.getCookies();
+			String ssid = "";
+			for(Cookie c:cookies) {
+				if(c.getName().equals("ssid")) {
+					ssid = c.getValue();
+				}
+			}
+			if(ssid.equals("")) {
+				out.println("419 Session Expired ... ");
+			}else {
+				
+				LeaveTypeModel ltModel = new LeaveTypeModel();
+				request.setAttribute("leavetypes", ltModel.getAll()); 
+				UserModel userModel = new UserModel();
+				request.setAttribute("users", userModel.getAll());
+				UserLeaveMapperModel ulmModel = new UserLeaveMapperModel();
+				ulmModel.getLeavemapperByLeaveTypeAndUser();
+				request.setAttribute("pageName", "leave-assign");
+				RequestDispatcher rd = request.getRequestDispatcher(path+"admin/index.jsp");
+				rd.forward(request, response);
+			}
+		}
+		else if(requestUrl.endsWith(ADMIN_LEAVE_APPROVAL)) {
 			Cookie[] cookies = request.getCookies();
 			String ssid = "";
 			for(Cookie c:cookies) {

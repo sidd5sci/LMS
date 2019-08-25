@@ -8,26 +8,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.frapwise.dao.LeaveTypeDao;
+import com.frapwise.dao.Queries;
 import com.frapwise.db.DB;
 import com.frapwise.entities.Department;
 import com.frapwise.entities.LeaveType;
 import com.frapwise.exceptions.DepartmentException;
 import com.frapwise.exceptions.LeaveTypeException;
 
-public class LeaveTypeModel implements LeaveTypeDao{
+public class LeaveTypeModel implements LeaveTypeDao,Queries{
 
 	private Connection conn;
 	private PreparedStatement prep;
 	private ResultSet result;
 
-	// Setters
-	private final static String ADD_LEAVETYPE			= "INSERT INTO leave_types(id,name,description) VALUES(null,?,?)";
-	private final static String REMOVE_LEAVETYPE		= "DELETE FROM leave_types where id = ?";
-	private final static String UPDATE_LEAVETYPE		= "UPDATE leave_types SET name = ? , description = ? WHERE id = ?";
-	// getters
-	private final static String GET_LEAVETYPE_BY_ID 	= "SELECT * FROM leave_types WHERE id = ?";
-	private final static String GET_ALL_LEAVETYPE 		= "SELECT * FROM leave_types";
-	
+
 
 	
 	public LeaveTypeModel(){

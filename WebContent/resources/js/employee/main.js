@@ -192,11 +192,14 @@ $(document).ready(function(){
 					flag = 1;
 				}
 				
-				if( (valid == 0 || valid == 2) && type == "create"){
+				if( (valid == 0 || valid == 2 || valid == 3) && type == "create"){
 					if(valid == 0)
 						alert.html("You already have leave start from this date !!");
-					else 
+					else if(valid == 2) 
 						alert.html("You already have leave end to this date !!");
+					else if(valid == 3)
+						alert.html("You date are conflicting with previous leaves !!");
+					
 					alert.addClass("danger");
 					alert.show();
 					flag = 1;

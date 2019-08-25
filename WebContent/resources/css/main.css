@@ -204,20 +204,20 @@ Description: Main css of leave managment system
   6 TABLES
  =================================== 
  */ 
- table{
+ #dataTable{
  	overflow-x:auto;
  	
  }
- th{
+ #dataTable th{
  	background:#ccc;
  }
- tr{
+ #dataTable tr{
  	min-height:50px;
  }
- tr:nth-child(even) {
+ #dataTable tr:nth-child(even) {
   	background-color: #f2f2f2
  }
- td{
+ #dataTable td{
  	min-width:50px;
  }
   /* 

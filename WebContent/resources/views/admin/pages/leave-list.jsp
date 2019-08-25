@@ -9,10 +9,13 @@ String baseUrl = ctx.getInitParameter("url");
 String viewPath = ctx.getInitParameter("viewPath");
 
 %>
+
+
+
 <button id="downloadReport" class="form-btn"> Download Report</button>
     <div class="dataTables">
     
-    <table>
+    <table id="dataTable">
     
     	<thead>
     		<th>Leave Request</th>
@@ -71,3 +74,5 @@ String viewPath = ctx.getInitParameter("viewPath");
     </table>
     
     </div>
+    
+    

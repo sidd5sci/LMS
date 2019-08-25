@@ -5,23 +5,17 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.List;
 
+import com.frapwise.dao.Queries;
 import com.frapwise.dao.SessionDao;
 import com.frapwise.db.DB;
 import com.frapwise.entities.Session;
 
-public class SessionModel implements SessionDao{
+public class SessionModel implements SessionDao,Queries{
 	
 	private Connection conn;
 	private PreparedStatement prep;
 	private ResultSet result;
 
-	// Setters
-	private final static String ADD_SESSION				= "INSERT INTO sessions(id,uid,ip_address,user_agent,payload) VALUES(?,?,?,?,?)";
-	private final static String UPDATE_PAYLOAD			= "";
-	private final static String REMOVE_SESSION			= "DELETE session where id = ?";
-	// getters
-	private final static String GET_SESSION_BY_SSID 	= "SELECT * FROM users WHERE id = ?";
-	private final static String GET_ALL_SESSION 		= "SELECT * FROM users";
 	
 
 	

@@ -10,12 +10,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.frapwise.dao.Queries;
 import com.frapwise.dao.UserLeaveMapperDao;
 import com.frapwise.db.DB;
 import com.frapwise.entities.Leave;
 import com.frapwise.entities.UserLeaveMapper;
 
-public class UserLeaveMapperModel implements UserLeaveMapperDao{
+public class UserLeaveMapperModel implements UserLeaveMapperDao,Queries{
 
 	private Connection conn;
 	private PreparedStatement prep;
@@ -23,22 +24,6 @@ public class UserLeaveMapperModel implements UserLeaveMapperDao{
 	
 
 
-	// Setters
-	private final static String ADD_LEAVE	 			= "INSERT INTO user_leave_maper(id,uid,leave_type_id,leave_max,leave_taken,leave_availible,time_duration,assigned_from,assigned_to) VALUES (null,?,?,?,?,?,?,?,?)";
-	private final static String REMOVE_LEAVE			= "DELETE FROM user_leave_maper WHERE id = ?";
-	private final static String UPDATE_LEAVE			= "UPDATE user_leave_maper SET uid = ?, leave_type_id = ?, leave_max = ?, leave_taken = ?, leave_availible = ?, time_duration = ?, assigned_from,assigned_to = ? WHERE id = ?";
-	private final static String REMOVE_LEAVE_BY_UID		= "DELETE FROM user_leave_maper WHERE uid = ?";
-	private final static String UPDATE_LEAVE_N_BY_UID_L = "UPDATE user_leave_maper SET leave_taken = leave_taken - ?, leave_availible = leave_availible + ? WHERE uid = ? and leave_type_id = ? ";
-	private final static String UPDATE_LEAVE_P_BY_UID_L	= "UPDATE user_leave_maper SET leave_taken = leave_taken + ?, leave_availible = leave_availible - ? WHERE uid = ? and leave_type_id = ? ";
-	// getters
-	private final static String GET_LEAVE_BY_ID 		= "SELECT * FROM user_leave_maper WHERE id = ?";
-	private final static String GET_ALL_LEAVES			= "SELECT * FROM user_leave_maper";
-	private final static String GET_LEAVE_BY_TODAY		= "SELECT * FROM user_leave_maper WHERE assigned_from = ?"; 
-	private final static String GET_LEAVE_BY_APPLIED 	= "SELECT * FROM user_leave_maper WHERE assigned_from = ?";
-	private final static String GET_LEAVE_BY_DATES 		= "SELECT * FROM user_leave_maper WHERE assigned_from > ? and assigned_to < ?";
-	private final static String GET_LEAVE_BY_USER		= "SELECT * FROM user_leave_maper WHERE uid = ?";
-	private final static String GET_LEAVE_BY_DEPARTMENT	= "SELECT * FROM user_leave_maper WHERE department_id = ?";
-	private final static String GET_LEAVE_BY_LEAVETYPE	= "SELECT * FROM user_leave_maper WHERE leave_type_id = ?";
 	
 
 	public UserLeaveMapperModel(){
@@ -52,7 +37,7 @@ public class UserLeaveMapperModel implements UserLeaveMapperDao{
 		UserLeaveMapper l = (UserLeaveMapper) o;
 		Integer flag = 0;
 		try {
-			this.prep = this.conn.prepareStatement(ADD_LEAVE,Statement.RETURN_GENERATED_KEYS);
+			this.prep = this.conn.prepareStatement(ADD_LEAVEMAPPER,Statement.RETURN_GENERATED_KEYS);
 			this.setParam(this.prep, l);
 			flag = this.prep.executeUpdate();
 	
@@ -69,7 +54,7 @@ public class UserLeaveMapperModel implements UserLeaveMapperDao{
 		Integer id = (Integer) o;
 		Integer flag = 0;
 		try {
-			this.prep = this.conn.prepareStatement(REMOVE_LEAVE);
+			this.prep = this.conn.prepareStatement(REMOVE_LEAVEMAPPER);
 			this.prep.setInt(1, id);
 			flag = this.prep.executeUpdate();
 		}catch(SQLException e) {
@@ -81,7 +66,7 @@ public class UserLeaveMapperModel implements UserLeaveMapperDao{
 		
 		Integer flag = 0;
 		try {
-			this.prep = this.conn.prepareStatement(REMOVE_LEAVE_BY_UID);
+			this.prep = this.conn.prepareStatement(REMOVE_LEAVEMAPPER_BY_UID);
 			this.prep.setInt(1, uid);
 			flag = this.prep.executeUpdate();
 		}catch(SQLException e) {
@@ -95,7 +80,7 @@ public class UserLeaveMapperModel implements UserLeaveMapperDao{
 		UserLeaveMapper l = (UserLeaveMapper) o;
 		Integer flag = 0;
 		try {
-			this.prep = this.conn.prepareStatement(UPDATE_LEAVE);
+			this.prep = this.conn.prepareStatement(UPDATE_LEAVEMAPPER);
 			this.setParam(this.prep,l);
 			this.prep.setInt(9,l.getId());
 			flag = this.prep.executeUpdate();
@@ -110,7 +95,7 @@ public class UserLeaveMapperModel implements UserLeaveMapperDao{
 		// TODO Auto-generated method stub
 		List<Object> leaves = new ArrayList<Object>();
 		try {
-			this.prep = this.conn.prepareStatement(GET_ALL_LEAVES);
+			this.prep = this.conn.prepareStatement(GET_ALL_LEAVEMAPPERS);
 			this.result = this.prep.executeQuery();
 			while(this.result.next()) {
 				UserLeaveMapper l = new UserLeaveMapper();
@@ -164,9 +149,9 @@ public class UserLeaveMapperModel implements UserLeaveMapperDao{
 		Integer flag = 0;
 		try {
 			if(opration.equals("+")) {
-				this.prep = this.conn.prepareStatement(UPDATE_LEAVE_P_BY_UID_L);
+				this.prep = this.conn.prepareStatement(UPDATE_LEAVEMAPPER_P_BY_UID_L);
 			}else {
-				this.prep = this.conn.prepareStatement(UPDATE_LEAVE_N_BY_UID_L);
+				this.prep = this.conn.prepareStatement(UPDATE_LEAVEMAPPER_N_BY_UID_L);
 			}
 			
 			this.prep.setInt(1, duration);
@@ -187,7 +172,7 @@ public class UserLeaveMapperModel implements UserLeaveMapperDao{
 		// TODO Auto-generated method stub
 		List<UserLeaveMapper> leaves = new ArrayList<UserLeaveMapper>();
 		try {
-			this.prep = this.conn.prepareStatement(GET_LEAVE_BY_USER);
+			this.prep = this.conn.prepareStatement(GET_LEAVEMAPPER_BY_USER);
 			this.prep.setInt(1, uid);
 			this.result = this.prep.executeQuery();
 			while(this.result.next()) {
@@ -206,7 +191,7 @@ public class UserLeaveMapperModel implements UserLeaveMapperDao{
 		// TODO Auto-generated method stub
 		List<UserLeaveMapper> leaves = new ArrayList<UserLeaveMapper>();
 		try {
-			this.prep = this.conn.prepareStatement(GET_LEAVE_BY_USER);
+			this.prep = this.conn.prepareStatement(GET_LEAVEMAPPER_BY_USER);
 			this.prep.setInt(1, uid);
 			this.result = this.prep.executeQuery();
 			while(this.result.next()) {

@@ -8,26 +8,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.frapwise.dao.DepartmentDao;
+import com.frapwise.dao.Queries;
 import com.frapwise.db.DB;
 import com.frapwise.entities.Department;
 import com.frapwise.entities.User;
 import com.frapwise.exceptions.DepartmentException;
 
-public class DepartmentModel implements DepartmentDao{
+public class DepartmentModel implements DepartmentDao,Queries{
 
 	private Connection conn;
 	private PreparedStatement prep;
 	private ResultSet result;
 
-	// Setters
-	private final static String ADD_DEPARTMENT			= "INSERT INTO departments(id,name,description) VALUES(null,?,?)";
-	private final static String REMOVE_DEPARTMENT		= "DELETE FROM departments where id = ?";
-	private final static String UPDATE_DEPARTMENT		= "UPDATE departments SET name = ? , description = ? WHERE id = ?";
-	// getters
-	private final static String GET_DEPARTMENT_BY_ID 	= "SELECT * FROM departments WHERE id = ?";
-	private final static String GET_ALL_DEPARTMENTS 	= "SELECT * FROM departments";
 	
-
 	
 	public DepartmentModel(){
 		DB db = new DB();

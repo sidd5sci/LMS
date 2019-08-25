@@ -11,7 +11,7 @@ String viewPath = ctx.getInitParameter("viewPath");
 <button id="downloadReport" class="form-btn"> Download Report</button>
 <div class="data-tables">
 
-	<table>
+	<table id="dataTable">
 
 		<thead>
 			<th>Employee</th>
@@ -20,6 +20,7 @@ String viewPath = ctx.getInitParameter("viewPath");
 			<th>Leave Taken</th>
 			<th>Leave Availible</th>
 			<th>Duration</th>
+			<th>Action</th>
 		</thead>
 
 		<tbody>
@@ -38,6 +39,9 @@ String viewPath = ctx.getInitParameter("viewPath");
 				<td><%=lm.getLeaveTaken()%></td>
 				<td><%=lm.getLeaveAvailible()%></td>
 				<td><%=lm.getLeaveFrom()%> - <%=lm.getLeaveTo()%></td>
+				<td>
+					<a href="<%=baseUrl%>admin-edit-max-leave.htm?uid=<%=lm.getUid()%>&leaveType=<%=lm.getLeaveTypeId()%>" >edit</a>
+				</td>
 			</tr>
 			<%} %>
 		</tbody>
