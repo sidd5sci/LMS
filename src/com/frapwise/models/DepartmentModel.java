@@ -47,10 +47,13 @@ public class DepartmentModel implements DepartmentDao{
 				this.prep.setString(1, dpt.getName());
 				this.prep.setString(2,dpt.getDescription());
 				flag = this.prep.executeUpdate();
+				
 			}
 			
+		}catch(SQLException e) {
+			throw new DepartmentException("Duplicate Department exception occured");
 		}catch(Exception e) {
-			
+			throw new DepartmentException("Department exception occured");
 		}
 		
 		return flag;
@@ -66,7 +69,9 @@ public class DepartmentModel implements DepartmentDao{
 			this.prep.setInt(1, id);
 			flag = this.prep.executeUpdate();
 		}catch(SQLException e) {
-			e.printStackTrace();
+			throw new DepartmentException("Department exception occured");
+		}catch(Exception e) {
+			throw new DepartmentException("Department exception occured");
 		}
 		return flag;
 	}
@@ -83,7 +88,9 @@ public class DepartmentModel implements DepartmentDao{
 			this.prep.setInt(3,d.getId());
 			flag = this.prep.executeUpdate();
 		}catch(SQLException e) {
-			e.printStackTrace();
+			throw new DepartmentException("Department exception occured");
+		}catch(Exception e) {
+			throw new DepartmentException("Department exception occured");
 		}
 		return flag;
 	}
@@ -103,13 +110,15 @@ public class DepartmentModel implements DepartmentDao{
 				departments.add(d);
 			}
 		}catch(SQLException e) {
-			e.printStackTrace();
+			throw new DepartmentException("Department exception occured");
+		}catch(Exception e) {
+			throw new DepartmentException("Department exception occured");
 		}
 		return departments;
 	}
 
 	@Override
-	public Department getDepartmentById(int id) {
+	public Department getDepartmentById(int id) throws DepartmentException {
 		// TODO Auto-generated method stub
 		Department dpt = new Department();
 		try {
@@ -121,8 +130,10 @@ public class DepartmentModel implements DepartmentDao{
 				dpt.setName(this.result.getString("name"));
 				dpt.setDescription(this.result.getString("description"));
 			}
+		}catch(SQLException e) {
+			throw new DepartmentException("Department exception occured");
 		}catch(Exception e) {
-			e.printStackTrace();
+			throw new DepartmentException("Department exception occured");
 		}
 		return dpt;
 	}

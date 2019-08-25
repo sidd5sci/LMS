@@ -14,6 +14,7 @@ import com.frapwise.dao.LeaveDao;
 import com.frapwise.db.DB;
 import com.frapwise.entities.Leave;
 import com.frapwise.entities.User;
+import com.frapwise.exceptions.LeaveException;
 
 public class LeaveModel implements LeaveDao{
 
@@ -61,6 +62,8 @@ public class LeaveModel implements LeaveDao{
 			}
 		}catch(SQLException e) {
 			e.printStackTrace();
+		}catch(Exception e) {
+			throw new LeaveException("Leave error occured");
 		}
 		return flag;
 	}
@@ -76,6 +79,8 @@ public class LeaveModel implements LeaveDao{
 			flag = this.prep.executeUpdate();
 		}catch(SQLException e) {
 			e.printStackTrace();
+		}catch(Exception e) {
+			throw new LeaveException("Leave error occured");
 		}
 		return flag;
 	}
@@ -92,6 +97,8 @@ public class LeaveModel implements LeaveDao{
 			flag = this.prep.executeUpdate();
 		}catch(SQLException e) {
 			e.printStackTrace();
+		}catch(Exception e) {
+			throw new LeaveException("Leave error occured");
 		}
 		return flag;
 	}
@@ -111,11 +118,13 @@ public class LeaveModel implements LeaveDao{
 			}
 		}catch(SQLException e) {
 			e.printStackTrace();
+		}catch(Exception e) {
+			throw new LeaveException("Leave error occured");
 		}
 		return leaves;
 	}
 	
-	public List<Leave> getLeaveByFilter(String from,String to,String status,Integer uid) throws ParseException{
+	public List<Leave> getLeaveByFilter(String from,String to,String status,Integer uid) throws ParseException, LeaveException{
 	
 		SimpleDateFormat format = new SimpleDateFormat("dd-M-yy");
 		StringBuilder query = new StringBuilder();
@@ -152,12 +161,15 @@ public class LeaveModel implements LeaveDao{
 			}
 		}catch(SQLException e) {
 			e.printStackTrace();
+		}catch(Exception e) {
+			throw new LeaveException("Leave error occured");
 		}
 		return leaves;
 		
 		
 	}
-	public int approve(int id) {
+	
+	public int approve(int id) throws LeaveException {
 		try {
 			this.prep = this.conn.prepareStatement(APPROVE_LEAVE);
 			this.prep.setString(1, "approved");
@@ -166,25 +178,29 @@ public class LeaveModel implements LeaveDao{
 			id = this.prep.executeUpdate();
 		}catch(SQLException e) {
 			e.printStackTrace();
+		}catch(Exception e) {
+			throw new LeaveException("Leave error occured");
 		}
 		return id;
 	}
 	
-	public int reject(int id) {
+	public int reject(int id) throws LeaveException {
 		try {
 			this.prep = this.conn.prepareStatement(REJECT_LEAVE);
-			this.prep.setString(1, "reject");
+			this.prep.setString(1, "rejected");
 			this.prep.setInt(2, id);
 			
 			id = this.prep.executeUpdate();
 		}catch(SQLException e) {
 			e.printStackTrace();
+		}catch(Exception e) {
+			throw new LeaveException("Leave error occured");
 		}
 		return id;
 	}
 	
 	@Override
-	public Leave getLeaveById(int id) {
+	public Leave getLeaveById(int id) throws LeaveException {
 		// TODO Auto-generated method stub
 		Leave leave = new Leave();
 		try {
@@ -198,6 +214,8 @@ public class LeaveModel implements LeaveDao{
 			
 		}catch(SQLException e) {
 			e.printStackTrace();
+		}catch(Exception e) {
+			throw new LeaveException("Leave error occured");
 		}
 		return leave;
 	}
@@ -215,7 +233,7 @@ public class LeaveModel implements LeaveDao{
 	}
 
 	@Override
-	public List<Leave> getLeavesByUser(int uid) {
+	public List<Leave> getLeavesByUser(int uid) throws LeaveException {
 		// TODO Auto-generated method stub
 		
 		List<Leave> leaves = new ArrayList<Leave>();
@@ -232,10 +250,12 @@ public class LeaveModel implements LeaveDao{
 			}
 		}catch(SQLException e) {
 			e.printStackTrace();
+		}catch(Exception e) {
+			throw new LeaveException("Leave error occured");
 		}
 		return leaves;
 	}
-	public List<Leave> getLeavesByUserAndDate(int uid) {
+	public List<Leave> getLeavesByUserAndDate(int uid) throws LeaveException {
 		// TODO Auto-generated method stub
 		
 		List<Leave> leaves = new ArrayList<Leave>();
@@ -252,12 +272,14 @@ public class LeaveModel implements LeaveDao{
 			}
 		}catch(SQLException e) {
 			e.printStackTrace();
+		}catch(Exception e) {
+			throw new LeaveException("Leave error occured");
 		}
 		return leaves;
 	}
 	
 	@Override
-	public List<Leave> getLeavesByAppliedDate(String date) throws ParseException {
+	public List<Leave> getLeavesByAppliedDate(String date) throws ParseException, LeaveException {
 		// TODO Auto-generated method stub
 		SimpleDateFormat format = new SimpleDateFormat( "yy-M-dd" );
 		List<Leave> leaves = new ArrayList<Leave>();
@@ -276,12 +298,14 @@ public class LeaveModel implements LeaveDao{
 			}
 		}catch(SQLException e) {
 			e.printStackTrace();
+		}catch(Exception e) {
+			throw new LeaveException("Leave error occured");
 		}
 		return leaves;
 	}
 
 	@Override
-	public List<Leave> getLeavesInDates(String start, String end) throws ParseException {
+	public List<Leave> getLeavesInDates(String start, String end) throws ParseException, LeaveException {
 		// TODO Auto-generated method stub
 		SimpleDateFormat format = new SimpleDateFormat( "yy-M-dd" );
 		List<Leave> leaves = new ArrayList<Leave>();
@@ -302,12 +326,14 @@ public class LeaveModel implements LeaveDao{
 			}
 		}catch(SQLException e) {
 			e.printStackTrace();
+		}catch(Exception e) {
+			throw new LeaveException("Leave error occured");
 		}
 		return leaves;
 	}
 
 	
-	public List<Leave> getLeavesToday(String start) throws ParseException {
+	public List<Leave> getLeavesToday(String start) throws ParseException, LeaveException {
 		// TODO Auto-generated method stub
 		System.out.println(start);
 		SimpleDateFormat format = new SimpleDateFormat( "yy-M-dd" );
@@ -327,6 +353,8 @@ public class LeaveModel implements LeaveDao{
 			}
 		}catch(SQLException e) {
 			e.printStackTrace();
+		}catch(Exception e) {
+			throw new LeaveException("Leave error occured");
 		}
 		return leaves;
 	}

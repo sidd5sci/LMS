@@ -23,14 +23,17 @@ import com.frapwise.entities.Session;
 import com.frapwise.entities.User;
 import com.frapwise.entities.UserLeaveMapper;
 import com.frapwise.exceptions.DepartmentException;
+import com.frapwise.exceptions.LeaveException;
 import com.frapwise.exceptions.LeaveTypeException;
 import com.frapwise.exceptions.UserException;
+import com.frapwise.exceptions.UserLeaveMapperException;
 import com.frapwise.models.DepartmentModel;
 import com.frapwise.models.LeaveModel;
 import com.frapwise.models.LeaveTypeModel;
 import com.frapwise.models.SessionModel;
 import com.frapwise.models.UserLeaveMapperModel;
 import com.frapwise.models.UserModel;
+import com.frapwise.routes.WebRoutes;
 import com.frapwise.utils.AES_Cipher;
 import com.frapwise.utils.RandomGenerator;
 import com.frapwise.utils.Util;
@@ -39,67 +42,10 @@ import com.frapwise.utils.Util;
  * Servlet implementation class FrontController
  */
 @WebServlet("*.htm")
-public class FrontController extends HttpServlet {
+public class FrontController extends HttpServlet implements WebRoutes{
 	private static final long serialVersionUID = 1L;
        
-	
-	private final static String HOME 					= "home.htm";
-	
-	// auth routes
-	private final static String LOGIN 					= "login.htm";
-	private final static String AUHENTICATE 			= "login-db.htm";
-	private final static String LOGOUT 					= "logout.htm";
-	
-	// Employee routes
-	private final static String EMPLOYEE_DASHBOARD 		= "employee-dashboard.htm";
-		// leaves
-		private final static String EMPLOYEE_ADD_LEAVE		 = "employee-add-leave.htm";
-		private final static String EMPLOYEE_ADD_LEAVE_DB	 = "employee-add-leave-db.htm";
-		private final static String EMPLOYEE_ALL_LEAVES		 = "employee-all-leaves.htm";
-		private final static String EMPLOYEE_STATUS_LEAVE	 = "employee-status-leave.htm";
-		private final static String EMPLOYEE_EDIT_LEAVE		 = "employee-edit-leave.htm";
-		private final static String EMPLOYEE_EDIT_LEAVE_DB	 = "employee-edit-leave-db.htm";
-		private final static String EMPLOYEE_REMOVE_LEAVE	 = "employee-remove-leave.htm";
-		private final static String EMPLOYEE_PENDING_LEAVE	 = "employee-pending-leave.htm";
-		private final static String EMPLOYEE_APROVED_LEAVE	 = "employee-aproved-leave.htm";
-		private final static String EMPLOYEE_APPLY_FILTERS	 = "employee-appy-filter.htm";
-	// Admin routes
-	private final static String ADMIN_DASHBOARD 		= "admin-dashboard.htm";
-		// department
-		private final static String ADMIN_ADD_DEPARTMENT	 = "admin-add-department.htm";
-	    private final static String ADMIN_ADD_DEPARTMENT_DB	 = "admin-add-department-db.htm";
-		private final static String ADMIN_ALL_DEPARTMENT	 = "admin-all-department.htm";
-		private final static String ADMIN_EDIT_DEPARTMENT	 = "admin-edit-department.htm";
-		private final static String ADMIN_EDIT_DEPARTMENT_DB = "admin-edit-department-db.htm";
-		private final static String ADMIN_REMOVE_DEPARTMENT	 = "admin-remove-department.htm";
-		// leave types
-		private final static String ADMIN_ADD_LEAVETYPE		 = "admin-add-leavetype.htm";
-		private final static String ADMIN_ADD_LEAVETYPE_DB	 = "admin-add-leavetype-db.htm";
-		private final static String ADMIN_ALL_LEAVETYPE		 = "admin-all-leavetype.htm";
-		private final static String ADMIN_EDIT_LEAVETYPE	 = "admin-edit-leavetype.htm";
-		private final static String ADMIN_EDIT_LEAVETYPE_DB	 = "admin-edit-leavetype-db.htm";
-		private final static String ADMIN_REMOVE_LEAVETYPE   = "admin-remove-leavetype.htm";
-		// employees
-		private final static String ADMIN_ADD_EMPLOYEE	     = "admin-add-employee.htm";
-		private final static String ADMIN_ADD_EMPLOYEE_DB	 = "admin-add-employee-db.htm";
-		private final static String ADMIN_ALL_EMPLOYEE		 = "admin-all-employee.htm";
-		private final static String ADMIN_EDIT_EMPLOYEE		 = "admin-edit-employee.htm";
-		private final static String ADMIN_EDIT_EMPLOYEE_DB	 = "admin-edit-employee-db.htm";
-		private final static String ADMIN_REMOVE_EMPLOYEE	 = "admin-remove-employee.htm";
-		private final static String ADMIN_EMPLOYEE_FILTER	 = "";
-		// leave
-		private final static String ADMIN_ADD_LEAVE 		 = "admin-add-leave.htm";
-		private final static String ADMIN_ADD_LEAVE_DB 		 = "admin-add-leave-db.htm";
-		private final static String ADMIN_ALL_LEAVE			 = "admin-all-leaves.htm";
-		private final static String ADMIN_TODAYS_LEAVES		 = "admin-today-leaves.htm";
-		private final static String ADMIN_LEAVE_APPROVAL 	 = "admin-leave-approve.htm";
-		private final static String ADMIN_LEAVE_REJECT		 = "admin-reject-leave.htm";
-		private final static String ADMIN_ASSIGN_LEAVES		 = "admin-assign-leaves.htm";
-		private final static String ADMIN_ASSIGN_LEAVES_DB	 = "admin-assign-leave-db.htm";
-		private final static String ADMIN_STATUS_LEAVE		 = "admin-max-leaves-status.htm";
-		private final static String ADMIN_APPLY_FILTERS		 = "admin-apply-filter.htm";
-		private final static String ADMIN_UPLOAD_FILE		 = "admin-upload-data.htm";
-		
+
 	/**
      * @see HttpServlet#HttpServlet()
      */
@@ -174,19 +120,35 @@ public class FrontController extends HttpServlet {
 			response.sendRedirect(HOME);
 			
 		}else if(requestUrl.endsWith(LOGIN)) {
-			
-			RequestDispatcher rd = request.getRequestDispatcher(path+"auth/login.jsp");
-			rd.forward(request, response);
+			Cookie[] cookies = request.getCookies();
+			String ssid = "";
+			for(Cookie c:cookies) {
+				if(c.getName().equals("ssid")) {
+					ssid = c.getValue();
+				}
+			}
+			if(ssid.equals("")) {
+				RequestDispatcher rd = request.getRequestDispatcher(path+"auth/login.jsp");
+				rd.forward(request, response);
+			}
+			else {
+				String role = (String) session.getAttribute("role");
+				if(role.equals("Admin"))
+					response.sendRedirect(url+ADMIN_DASHBOARD);
+				else
+					response.sendRedirect(url+EMPLOYEE_DASHBOARD );
+			}
 		}else if(requestUrl.endsWith(AUHENTICATE)) {
 			UserModel um = new UserModel();
+			Cookie mcookie = new Cookie("message","");
+			mcookie.setMaxAge(10);
 			User u = new User();
 			u = null;
 			try {
 				u = um.Authenticate(request.getParameter("email"), 
 									AES_Cipher.getEncrypted(request.getParameter("password")) );
 			} catch (UserException e) {
-				// TODO Auto-generated catch block
-				request.setAttribute("message", "Email or password incorrect");
+				mcookie.setValue("Email_or_password_incorret");
 			}
 			if(u != null) {
 				
@@ -196,7 +158,7 @@ public class FrontController extends HttpServlet {
 				session.setAttribute("email", u.getEmail());
 				session.setAttribute("username", u.getUsername());
 				session.setAttribute("name", u.getFname()+" "+u.getLname());
-				
+				session.setAttribute("role", u.getRole());
 				System.out.println(ssid);
 				// setting session id to cookie
 				Cookie cookie = new Cookie("ssid",ssid);
@@ -217,7 +179,9 @@ public class FrontController extends HttpServlet {
 					response.sendRedirect(url+EMPLOYEE_DASHBOARD );
 				
 			}else {
-				request.setAttribute("message", "Email or password incorrect");
+				
+				response.addCookie(mcookie);
+				
 				RequestDispatcher rd = request.getRequestDispatcher(path+"auth/login.jsp");
 				rd.forward(request, response);
 			}
@@ -244,8 +208,6 @@ public class FrontController extends HttpServlet {
 				rd.forward(request, response);
 				
 			}
-			
-			
 			
 		}else if(requestUrl.endsWith(ADMIN_ADD_DEPARTMENT)) {
 			Cookie[] cookies = request.getCookies();
@@ -292,16 +254,19 @@ public class FrontController extends HttpServlet {
 				dpt.setName(request.getParameter("departmentName"));
 				dpt.setDescription(request.getParameter("departmentDesc"));
 				
+				Cookie cookie = new Cookie("message","Department_Added_Successfully");
+				cookie.setMaxAge(10);
 				try {
 					dptModel.add(dpt);
 				} catch (DepartmentException e) {
-					// TODO Auto-generated catch block
-					request.setAttribute("message", "Department name is empty");
+					cookie.setValue("Department_already_exist");
+					
 				}catch(Exception e) {
 					e.printStackTrace();
 				}
 				
-				response.sendRedirect(ADMIN_DASHBOARD);
+				response.addCookie(cookie);
+				response.sendRedirect(ADMIN_ALL_DEPARTMENT);
 					
 				
 			}
@@ -328,7 +293,6 @@ public class FrontController extends HttpServlet {
 					request.setAttribute("departments", dptModel.getAll());
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
-					request.setAttribute("message","Some error occured");
 					e.printStackTrace();
 				}
 				request.setAttribute("pageName", "department-all");
@@ -373,18 +337,23 @@ public class FrontController extends HttpServlet {
 				dpt.setId(Integer.parseInt(request.getParameter("id")) );
 				dpt.setName(request.getParameter("departmentName"));
 				dpt.setDescription(request.getParameter("departmentDesc"));
+				
+				Cookie cookie = new Cookie("message","Department_Updated_Successfully");
+				cookie.setMaxAge(10);
 				int flag = 0;
 				try {
 					flag = (int) dptModel.update(dpt);
-				} catch (Exception e) {
-					request.setAttribute("message", "Some error occured !!");
+				} catch(DepartmentException e) {
+					cookie.setValue("Some_error_occured");
+				}catch (Exception e) {
+					cookie.setValue("Some_error_occured");
 					e.printStackTrace();
 				}
 				
-				if(flag == 1) {
-					request.setAttribute("message", "Department updated successfully ");
-					response.sendRedirect(ADMIN_DASHBOARD);
-				}
+				
+				response.addCookie(cookie);
+				response.sendRedirect(ADMIN_DASHBOARD);
+				
 				
 				
 			}
@@ -399,19 +368,23 @@ public class FrontController extends HttpServlet {
 			if(ssid.equals("")) {
 				out.println("419 Session Expired ... ");
 			}else {
-				DepartmentModel dptModel = new DepartmentModel();							
+				DepartmentModel dptModel = new DepartmentModel();	
+				Cookie cookie = new Cookie("message","Department_Removed_Successfully");
+				cookie.setMaxAge(10);
 				int flag = 0;
 				try {
 					flag = (int) dptModel.remove(Integer.parseInt(request.getParameter("id")));
-				} catch (Exception e) {
-					request.setAttribute("message", "Some error occured !!");
+				} catch(DepartmentException e) {
+					cookie.setValue("Some_error_occured");
+				}catch (Exception e) {
+					cookie.setValue("Some_error_occured");
 					e.printStackTrace();
 				}
 				
-				if(flag == 1) {
-					request.setAttribute("message", "Department removed successfully ");
-					response.sendRedirect(ADMIN_DASHBOARD);
-				}
+				
+				response.addCookie(cookie);
+				response.sendRedirect(ADMIN_ALL_DEPARTMENT);
+				
 				
 				
 			}
@@ -454,16 +427,21 @@ public class FrontController extends HttpServlet {
 				lt.setName(request.getParameter("leaveTypeName"));
 				lt.setDescription(request.getParameter("leaveTypeDesc"));
 				
+				Cookie cookie = new Cookie("message","LeaveType_Added_Successfully");
+				cookie.setMaxAge(10);
+				
 				try {
-					ltModel.add(lt);
+					ltModel.add(lt);				
 				} catch (LeaveTypeException e) {
 					// TODO Auto-generated catch block
-					request.setAttribute("message", "LeaveType name is empty");
+					cookie.setValue("LeaveType_already_exist");  				
 				}catch(Exception e) {
+					cookie.setValue("Some_error_occured ");
 					e.printStackTrace();
 				}
 				
-				response.sendRedirect(ADMIN_DASHBOARD);
+				response.addCookie(cookie);
+				response.sendRedirect(ADMIN_ALL_LEAVETYPE);
 					
 				
 			}
@@ -535,18 +513,23 @@ public class FrontController extends HttpServlet {
 				lt.setId(Integer.parseInt(request.getParameter("id")) );
 				lt.setName(request.getParameter("leaveTypeName"));
 				lt.setDescription(request.getParameter("leaveTypeDesc"));
+				
+				Cookie cookie = new Cookie("message","LeaveType_Updated_Successfully");
+				cookie.setMaxAge(10);
 				int flag = 0;
 				try {
 					flag = (int) ltModel.update(lt);
-				} catch (Exception e) {
-					request.setAttribute("message", "Some error occured !!");
+				}catch(LeaveTypeException e) {
+					cookie.setValue("Some_error_occured");
+				}catch (Exception e) {
+					cookie.setValue("Some_error_occured");
 					e.printStackTrace();
 				}
 				
-				if(flag == 1) {
-					request.setAttribute("message", "LeaveType updated successfully ");
-					response.sendRedirect(ADMIN_DASHBOARD);
-				}
+				
+				response.addCookie(cookie);
+				response.sendRedirect(ADMIN_ALL_LEAVETYPE);
+				
 				
 				
 			}
@@ -561,19 +544,23 @@ public class FrontController extends HttpServlet {
 			if(ssid.equals("")) {
 				out.println("419 Session Expired ... ");
 			}else {
-				LeaveTypeModel ltModel = new LeaveTypeModel();							
+				LeaveTypeModel ltModel = new LeaveTypeModel();	
+				Cookie cookie = new Cookie("message","LeaveType_Removed_Successfully");
+				cookie.setMaxAge(10);
 				int flag = 0;
 				try {
 					flag = (int) ltModel.remove(Integer.parseInt(request.getParameter("id")));
-				} catch (Exception e) {
-					request.setAttribute("message", "Some error occured !!");
+				}catch (LeaveTypeException e) {
+					cookie.setValue("Some_error_occured ");
+				}catch (Exception e) {
+					cookie.setValue("Some_error_occured ");
 					e.printStackTrace();
 				}
 				
-				if(flag == 1) {
-					request.setAttribute("message", "LeaveType removed successfully ");
-					response.sendRedirect(ADMIN_DASHBOARD);
-				}
+				
+				response.addCookie(cookie);
+				response.sendRedirect(ADMIN_DASHBOARD);
+				
 				
 				
 			}
@@ -617,6 +604,9 @@ public class FrontController extends HttpServlet {
 				UserLeaveMapperModel ulmModel = new UserLeaveMapperModel(); 
 				LeaveTypeModel ltModel = new LeaveTypeModel();
 				List<Object> leaveTypes =  ltModel.getAll();
+				int flag = 0;
+				Cookie cookie = new Cookie("message","Employee_added_successfully");
+				cookie.setMaxAge(10);
 				
 				u.setFname(request.getParameter("fname"));
 				u.setLname(request.getParameter("lname"));
@@ -627,7 +617,6 @@ public class FrontController extends HttpServlet {
 				u.setPassword(AES_Cipher.getEncrypted(request.getParameter("password")) );
 				u.setRole(request.getParameter("role"));
 				u.setStatus(request.getParameter("status"));
-				
 				
 				try {
 					int id = (int) userModel.add(u);
@@ -648,13 +637,17 @@ public class FrontController extends HttpServlet {
 					
 				} catch (UserException e) {
 					// TODO Auto-generated catch block
-					request.setAttribute("message", "Employee data is empty");
+					cookie.setValue("Employee_username_or_email_already_exist");
+					flag = 1;
 				}catch(Exception e) {
 					e.printStackTrace();
 				}
-				
-				response.sendRedirect(ADMIN_DASHBOARD);
-					
+				    
+				response.addCookie(cookie);
+				if(flag == 0)
+					response.sendRedirect(ADMIN_ALL_EMPLOYEE);
+				else
+					response.sendRedirect(ADMIN_ADD_EMPLOYEE);
 				
 			}
 		}else if(requestUrl.endsWith(ADMIN_ALL_EMPLOYEE)) {
@@ -731,6 +724,9 @@ public class FrontController extends HttpServlet {
 			}else {
 				UserModel userModel = new UserModel();
 				User u = new User();
+				Cookie cookie = new Cookie("message","Employee_updated_successfully");
+				cookie.setMaxAge(10);
+				
 				u.setId(Integer.parseInt(request.getParameter("id")) );
 				u.setFname(request.getParameter("fname"));
 				u.setLname(request.getParameter("lname"));
@@ -745,15 +741,18 @@ public class FrontController extends HttpServlet {
 				int flag = 0;
 				try {
 					flag = (int) userModel.update(u);
-				} catch (Exception e) {
-					request.setAttribute("message", "Some error occured !!");
+				}catch(UserException e) {
+					cookie.setValue("Some_error_occured");
+				}
+				catch (Exception e) {
+					cookie.setValue("Some_error_occured");
 					e.printStackTrace();
 				}
 				
-				if(flag == 1) {
-					request.setAttribute("message", "User updated successfully ");
-					response.sendRedirect(ADMIN_DASHBOARD);
-				}
+				
+				response.addCookie(cookie);
+				response.sendRedirect(ADMIN_DASHBOARD);
+				
 				
 				
 			}
@@ -770,21 +769,25 @@ public class FrontController extends HttpServlet {
 			}else {
 				UserModel userModel = new UserModel();							
 				UserLeaveMapperModel ulmModel = new UserLeaveMapperModel();
+				Cookie cookie = new Cookie("message","Employee_removed_successfully");
+				cookie.setMaxAge(10);
 				int flag = 0;
 				
 				try {
 					flag = (int) userModel.remove(Integer.parseInt(request.getParameter("id")));
 					ulmModel.removeByUid(Integer.parseInt(request.getParameter("id")));
 				
-				} catch (Exception e) {
-					request.setAttribute("message", "Some error occured !!");
+				} catch(UserException e) {
+					cookie.setValue("Some_error_occured");
+				}catch (Exception e) {
+					cookie.setValue("Some_error_occured");
 					e.printStackTrace();
 				}
 				
-				if(flag == 1) {
-					request.setAttribute("message", "User removed successfully ");
-					response.sendRedirect(ADMIN_DASHBOARD);
-				}
+				 
+				response.addCookie(cookie);
+				response.sendRedirect(ADMIN_DASHBOARD);
+				
 				
 			}
 		}else if(requestUrl.endsWith(ADMIN_ADD_LEAVE)) {
@@ -798,6 +801,7 @@ public class FrontController extends HttpServlet {
 			if(ssid.equals("")) {
 				out.println("419 Session Expired ... ");
 			}else {
+				
 				DepartmentModel dptModel = new DepartmentModel();
 				request.setAttribute("departments", dptModel.getAll()); 
 				LeaveTypeModel ltModel = new LeaveTypeModel();
@@ -829,6 +833,8 @@ public class FrontController extends HttpServlet {
 				LeaveModel leaveModel = new LeaveModel();
 				Leave l = new Leave();
 				UserLeaveMapperModel ulmModel = new UserLeaveMapperModel();
+				Cookie cookie = new Cookie("message","Employee_leave_applied_successfully");
+				cookie.setMaxAge(10);
 				
 				l.setUserId(Integer.parseInt(request.getParameter("user")) );
 				l.setLeaveTypeId(Integer.parseInt(request.getParameter("leaveType")));
@@ -836,24 +842,25 @@ public class FrontController extends HttpServlet {
 				l.setLeaveFrom(request.getParameter("from"));
 				l.setLeaveTo(request.getParameter("to"));
 				l.setTimeOffType(Integer.parseInt(request.getParameter("timeOffType")) );				
-				int duration = Integer.parseInt(request.getParameter("duration"));
+				//int duration = Integer.parseInt(request.getParameter("duration"));
+				int duration = (int) Util.getDaysNoWeekendsJquery(l.getLeaveFrom(), l.getLeaveTo());
 				System.out.println(l.toString());
+				
 				try {
 					Integer id = (Integer)leaveModel.add(l);
 					if(id != null) {
 						ulmModel.updateLeaveByUserAndLeaveType(Integer.parseInt(request.getParameter("user"))
 																,l.getLeaveTypeId(),duration,"+");
 					}
-				} catch (UserException e) {
+				}catch (LeaveException e) {
 					// TODO Auto-generated catch block
-					request.setAttribute("message", "Leave data is empty");
+					cookie.setValue("Some_error_occured");
 				}catch(Exception e) {
+					cookie.setValue("Some_error_occured");
 					e.printStackTrace();
 				}
-				
+				response.addCookie(cookie);
 				response.sendRedirect(ADMIN_DASHBOARD);
-					
-				
 			}
 		}else if(requestUrl.endsWith(ADMIN_ALL_LEAVE)) {
 			Cookie[] cookies = request.getCookies();
@@ -878,7 +885,6 @@ public class FrontController extends HttpServlet {
 				try {
 					request.setAttribute("leaves", leaveModel.getAll());
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					request.setAttribute("message","Some error occured");
 					e.printStackTrace();
 				}
@@ -908,14 +914,17 @@ public class FrontController extends HttpServlet {
 				java.util.Date today= new java.util.Date();
 				String todayDate = new SimpleDateFormat("yy-M-dd").format(today);
 				LeaveModel leaveModel = new LeaveModel(); 
-				
+				Cookie cookie = new Cookie("message","");
+				cookie.setMaxAge(0);
 				try {
 					request.setAttribute("leaves", leaveModel.getLeavesToday(todayDate) );
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
-					request.setAttribute("message","Some error occured");
+					cookie.setValue("Some error occured");
+					cookie.setMaxAge(10);
 					e.printStackTrace();
 				}
+				response.addCookie(cookie);
 				request.setAttribute("pageName", "leave-list");
 				RequestDispatcher rd = request.getRequestDispatcher(path+"admin/index.jsp");
 				rd.forward(request, response);
@@ -962,6 +971,8 @@ public class FrontController extends HttpServlet {
 				
 				UserLeaveMapperModel ulmModel = new UserLeaveMapperModel();
 				UserLeaveMapper ulm = new UserLeaveMapper();
+				Cookie cookie = new Cookie("message","Leaves_assigned_successfully");
+				cookie.setMaxAge(10);
 				
 				ulm.setUid(Integer.parseInt(request.getParameter("user")));
 				ulm.setLeaveTypeId(Integer.parseInt(request.getParameter("leaveType")));
@@ -970,10 +981,15 @@ public class FrontController extends HttpServlet {
 				ulm.setLeaveTo(request.getParameter("to"));
 				ulm.setLeaveTaken(0);
 				ulm.setLeaveAvailible(Integer.parseInt(request.getParameter("max")));
-				ulm.setTimeDuration(0);
+				ulm.setTimeDuration((int)Util.getDays(ulm.getLeaveFrom(), ulm.getLeaveTo()));
 				
-				ulmModel.add(ulm);
+				try{
+					ulmModel.add(ulm);
+				}catch(UserLeaveMapperException e) {
+					cookie.setValue("Some_error_occured");
+				}
 				
+				response.addCookie(cookie);
 				response.sendRedirect(ADMIN_DASHBOARD);
 			}
 		}else if(requestUrl.endsWith(ADMIN_LEAVE_APPROVAL)) {
@@ -988,8 +1004,12 @@ public class FrontController extends HttpServlet {
 				out.println("419 Session Expired ... ");
 			}else {
 				LeaveModel leaveModel = new LeaveModel();
+				Cookie cookie = new Cookie("message","Leave_aproved_successfully");
+				cookie.setMaxAge(10);
+				
 				int flag = leaveModel.approve(Integer.parseInt(request.getParameter("id")));
 				
+				response.addCookie(cookie);
 				response.sendRedirect(ADMIN_ALL_LEAVE);
 			}	
 			
@@ -1008,10 +1028,15 @@ public class FrontController extends HttpServlet {
 				LeaveModel leaveModel = new LeaveModel();
 				UserLeaveMapperModel ulmModel = new UserLeaveMapperModel();
 				Leave leave = leaveModel.getLeaveById(Integer.parseInt(request.getParameter("id")));
+				Cookie cookie = new Cookie("message","Leaves_rejected_successfully");
+				cookie.setMaxAge(10);
+				
 				int flag = leaveModel.reject(Integer.parseInt(request.getParameter("id")));
 				if(flag==1) {
 					ulmModel.updateLeaveByUserAndLeaveType(leave.getUserId(), leave.getLeaveTypeId(), (int)Util.getDays(leave.getLeaveFrom(),leave.getLeaveTo()), "-");
 				}
+				
+				response.addCookie(cookie);
 				response.sendRedirect(ADMIN_ALL_LEAVE);
 			}	
 			
@@ -1168,6 +1193,8 @@ public class FrontController extends HttpServlet {
 				Leave l = new Leave();
 				UserLeaveMapperModel ulmModel = new UserLeaveMapperModel();
 				UserLeaveMapper ulm = new UserLeaveMapper();
+				Cookie cookie = new Cookie("message","Leaves_applied_successfully");
+				cookie.setMaxAge(10);
 				
 				l.setUserId(Integer.parseInt(request.getParameter("user")) );
 				l.setLeaveTypeId(Integer.parseInt(request.getParameter("leaveType")));
@@ -1175,10 +1202,11 @@ public class FrontController extends HttpServlet {
 				l.setLeaveFrom(request.getParameter("from"));
 				l.setLeaveTo(request.getParameter("to"));
 				l.setTimeOffType(Integer.parseInt(request.getParameter("timeOffType")) );				
-				int duration = Integer.parseInt(request.getParameter("duration"));
 				
 				
-				
+				/* int duration = Integer.parseInt(request.getParameter("duration")); */
+				int duration = (int) Util.getDaysNoWeekendsJquery(l.getLeaveFrom(), l.getLeaveTo());
+	
 				System.out.println(l.toString());
 				Integer id = 0;
 				try {
@@ -1187,10 +1215,11 @@ public class FrontController extends HttpServlet {
 						ulmModel.updateLeaveByUserAndLeaveType(uid,l.getLeaveTypeId(),duration,"+");
 					}
 					
-				} catch (UserException e) {
+				} catch (LeaveException e) {
 					// TODO Auto-generated catch block
-					request.setAttribute("message", "Leave data is empty");
+					cookie.setValue("Leave_data_is_incorrect");
 				}catch(Exception e) {
+					cookie.setValue("Some_error_occured");
 					e.printStackTrace();
 				}
 				
@@ -1250,6 +1279,7 @@ public class FrontController extends HttpServlet {
 				UserModel userModel = new UserModel();
 				request.setAttribute("user", userModel.getUserById((Integer)session.getAttribute("uid"))); 
 				
+				
 				request.setAttribute("pageName", "leave-edit");
 				RequestDispatcher rd = request.getRequestDispatcher(path+"employee/index.jsp");
 				rd.forward(request, response);
@@ -1270,16 +1300,52 @@ public class FrontController extends HttpServlet {
 			}
 			else {
 				
-				LeaveModel lModel = new LeaveModel();
-				request.setAttribute("leave", lModel.getLeaveById(Integer.parseInt(request.getParameter("id"))) );
-				LeaveTypeModel ltModel = new LeaveTypeModel();
-				request.setAttribute("leavetypes", ltModel.getAll()); 
-				UserModel userModel = new UserModel();
-				request.setAttribute("user", userModel.getUserById((Integer)session.getAttribute("uid"))); 
+				Session sess = new Session();
+				SessionModel sessModel = new SessionModel(); 
+				sess = sessModel.getSession(ssid);
+				int uid = (int) session.getAttribute("uid");
 				
-				request.setAttribute("pageName", "leave-edit");
-				RequestDispatcher rd = request.getRequestDispatcher(path+"employee/index.jsp");
-				rd.forward(request, response);
+				LeaveModel leaveModel = new LeaveModel();
+				Leave pre = new Leave();
+				Leave l = new Leave();
+				
+				UserLeaveMapperModel ulmModel = new UserLeaveMapperModel();
+				UserLeaveMapper ulm = new UserLeaveMapper();
+				
+				l.setId(Integer.parseInt(request.getParameter("id")));
+				l.setUserId(Integer.parseInt(request.getParameter("user")) );
+				l.setLeaveTypeId(Integer.parseInt(request.getParameter("leaveType")));
+				l.setDepartmentId(Integer.parseInt(request.getParameter("department")));
+				l.setLeaveFrom(request.getParameter("from"));
+				l.setLeaveTo(request.getParameter("to"));
+				l.setTimeOffType(Integer.parseInt(request.getParameter("timeOffType")) );				
+				/* int duration = Integer.parseInt(request.getParameter("duration")); */
+				int duration = (int) Util.getDaysNoWeekends(l.getLeaveFrom(), l.getLeaveTo());
+				
+				
+				pre = leaveModel.getLeaveById(l.getId());
+				
+				System.out.println(l.toString());
+				
+				Integer id = 0;
+				try {
+					id = (Integer) leaveModel.update(l);
+					if(id != null && id != 0) {
+						if(Util.getDaysNoWeekends(pre.getLeaveFrom(), pre.getLeaveTo()) < duration ) {							
+							ulmModel.updateLeaveByUserAndLeaveType(uid,l.getLeaveTypeId(),duration,"+");
+						}else if(Util.getDaysNoWeekends(pre.getLeaveFrom(), pre.getLeaveTo()) > duration) {
+							ulmModel.updateLeaveByUserAndLeaveType(uid,l.getLeaveTypeId(),duration,"-");
+						}
+					}
+				}catch (LeaveException e) {
+					// TODO Auto-generated catch block
+					request.setAttribute("message", "Leave data is empty");
+				}catch(Exception e) {
+					e.printStackTrace();
+				}
+				
+				//response.sendRedirect(EMPLOYEE_DASHBOARD);
+				out.println(id);
 				
 			}
 			
@@ -1298,21 +1364,28 @@ public class FrontController extends HttpServlet {
 			else {
 				
 				LeaveModel leaveModel = new LeaveModel();
-				
-				
+				UserLeaveMapperModel ulmModel = new UserLeaveMapperModel();
+				Leave leave = leaveModel.getLeaveById(Integer.parseInt(request.getParameter("id")));
+				Cookie cookie = new Cookie("message","Leaves_canceled_successfully");
+				cookie.setMaxAge(10);
 				
 				int flag = 0;
 				try {
 					flag = (int) leaveModel.remove(Integer.parseInt(request.getParameter("id")));
+					if(flag==1) {
+						ulmModel.updateLeaveByUserAndLeaveType(leave.getUserId(), leave.getLeaveTypeId(), (int)Util.getDaysNoWeekends(leave.getLeaveFrom(),leave.getLeaveTo()), "-");
+					}
+					
+				
 				} catch (Exception e) {
-					request.setAttribute("message", "Some error occured !!");
+					cookie.setValue("Some_error_occured");
 					e.printStackTrace();
 				}
 				
-				if(flag == 1) {
-					request.setAttribute("message", "Leave removed successfully ");
-					response.sendRedirect(EMPLOYEE_DASHBOARD);
-				}
+				
+				response.addCookie(cookie);
+				response.sendRedirect(EMPLOYEE_ALL_LEAVES);
+				
 				
 			}
 			

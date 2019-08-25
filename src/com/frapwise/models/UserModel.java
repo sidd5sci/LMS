@@ -57,7 +57,10 @@ public class UserModel implements UserDao{
 			if(result.next()) {
 				flag = result.getInt(1);
 			}
+			
 		}catch(SQLException e) {
+			throw new UserException("User already exist");
+		}catch(Exception e) {
 			e.printStackTrace();
 		}
 		return flag;

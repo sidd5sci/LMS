@@ -53,5 +53,44 @@ String viewPath = ctx.getInitParameter("viewPath");
 		</div>
 	
 	</div>
+	<div class="alert" >
+	<p>${message}</p>
+</div>
 </body>
 </html>	
+
+
+
+
+<script src="<%=baseUrl%>/resources/js/jquery.3.4.1.js"></script>
+<script>
+
+
+/*message cookie handler*/
+function getCookie(cname) {
+	  var name = cname + "=";
+	  var decodedCookie = decodeURIComponent(document.cookie);
+	  var ca = decodedCookie.split(';');
+	  for(var i = 0; i <ca.length; i++) {
+	    var c = ca[i];
+	    while (c.charAt(0) == ' ') {
+	      c = c.substring(1);
+	    }
+	    if (c.indexOf(name) == 0) {
+	      return c.substring(name.length, c.length);
+	    }
+	  }
+	  return "";
+}
+
+let message = getCookie("message");	
+console.log("message:",message);
+if(message != "" && message != null){
+	$(".alert").css("display","block");
+	message = message.replace(/_/g, " ");
+	//message.replace('/\+/g', ' ');
+	console.log(message);
+	$(".alert").html(message);
+	
+}
+</script>

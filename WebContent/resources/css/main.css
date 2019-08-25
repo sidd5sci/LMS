@@ -1,15 +1,11 @@
 /* 
-
-	Auther  : siddhartha singh 
-	version : 1.0
-	contact : sidd5sci@gmail.com	
-	Licence : MIT
-	Description: Main css of leave managment system
-	
- 
+Auther  : siddhartha singh 
+version : 1.0
+contact : sidd5sci@gmail.com	
+Licence : MIT
+Description: Main css of leave managment system 
 */
- 
- 
+  
  *{
 	 border:0;
 	 margin:0;
@@ -65,7 +61,7 @@
  
  
  /* 
- COLORS
+  0 COLORS
  =================================== 
  */
  .primary{
@@ -75,7 +71,7 @@
  }
  
  /* 
- TYPOGRAPHY
+  1 TYPOGRAPHY
  =================================== 
  */
  .display-1{
@@ -96,7 +92,7 @@
 	
 }
  /* 
- HEADER
+  3 HEADER
  =================================== 
  */
  
@@ -146,7 +142,7 @@
 }
 
 /* 
-BUTTONS
+ 4 BUTTONS
 ============================== 
 
 */
@@ -197,7 +193,7 @@ BUTTONS
 }
  
  /* 
- IMAGES
+  5 IMAGES
  =================================== 
  */
  .img{
@@ -205,7 +201,7 @@ BUTTONS
  }
  
  /* 
- TABLES
+  6 TABLES
  =================================== 
  */ 
  table{
@@ -225,7 +221,7 @@ BUTTONS
  	min-width:50px;
  }
   /* 
- TABLES
+ ALERTS
  =================================== 
  */ 
  .alert-message{
@@ -235,6 +231,7 @@ BUTTONS
     background: rgba(102, 51, 153, 1);
     color: #fff;
     box-shadow: 0px 0px 10px rgba(102, 51, 153, 0.3);
+    text-align: center;
  }
  .alert{
  	
@@ -248,9 +245,16 @@ BUTTONS
     color: #fff;
     box-shadow: 0px 0px 10px rgba(102, 51, 153, 0.3);
     right: 50px;
+    animation-name: rightBoxMove ;
+    animation-duration: 10000ms;
+    animation-delay: 2000ms;
+    text-align: center;
+    opacity:0;
+    display:none;
  }
  .alert p{
  	color: #fff;
+ 	text-align: center;
  }
  .danger{
    	background:#9a0b03;
@@ -258,12 +262,19 @@ BUTTONS
  .success{
  	background:#198654;
  }
- 
- 
  .move{
  	cursour:e-resize;
  }
  .disabled{
 	cursor:not-allowed;
 }
- 
+
+ @keyframes  rightBoxMove {
+         
+    0%   {opacity: 1;}
+    /* 25%  {top: 200px;} */
+    /* 50%  {left: 65%;} */
+    /* 75%  {top: 200px;} */
+    100% {opacity: 0;}
+
+ }

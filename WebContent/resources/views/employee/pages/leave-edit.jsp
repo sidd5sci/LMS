@@ -1,16 +1,15 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"
-    import="java.util.*,com.frapwise.entities.*"%>
+    import="java.util.*,com.frapwise.entities.*,com.frapwise.utils.*"%>
 	
 <%
-ServletContext ctx = getServletContext();
-String baseUrl = ctx.getInitParameter("url");
-String viewPath = ctx.getInitParameter("viewPath");
-
- List<Object> leavetypes  = (ArrayList)request.getAttribute("leavetypes");
- User user		  = (User)request.getAttribute("user");
- Leave leave = (Leave) request.getAttribute("leave");
- 
+	ServletContext ctx = getServletContext();
+	String baseUrl = ctx.getInitParameter("url");
+	String viewPath = ctx.getInitParameter("viewPath");
+	
+	List<Object> leavetypes  = (ArrayList)request.getAttribute("leavetypes");
+	User user		  = (User)request.getAttribute("user");
+	Leave leave = (Leave) request.getAttribute("leave");
 %>    
     
     <div class="row">
@@ -19,7 +18,8 @@ String viewPath = ctx.getInitParameter("viewPath");
     		<div class="alert-message"></div>
     		<form action="employee-edit-leave-db.htm" id="leaveForm" data-type="edit" method="post">
     		
-    			<input type="hidden" name="department" value="<%=user.getDepartmentId()%>"/>
+    			<input type="hidden" name="id" id="lid" value="<%=leave.getId()%>" />
+    			<input type="hidden" name="department" id="department" value="<%=user.getDepartmentId()%>"/>
     			<input type="hidden" name="user" id="user" value="<%=user.getId()%>"/>
     			<input type="hidden" name="url" id="url" value="<%=baseUrl%>"/>
     			<div class="form-group">
@@ -30,15 +30,14 @@ String viewPath = ctx.getInitParameter("viewPath");
     						<option value="<%=lt.getId()%>" <% if(leave.getLeaveTypeId() == lt.getId())out.println("selected"); %> ><%=lt.getName()%></option>
     					<%}%>
     				</select>
-    			</div>
-    			
+    			</div>    			
     			<div class="form-group">
     				<label>Leave from</label>
-    				<input type="text" class="form-control" name="from" id="from" value="<%=leave.getLeaveFrom()%>" autocomplete="off" required/>
+    				<input type="text" class="form-control" name="from" id="from" value="<%=Util.sqlToJquery(leave.getLeaveFrom() ) %>" autocomplete="off" required/>
     			</div>
     			<div class="form-group">
     				<label>Leave to</label>
-    				<input type="text" class="form-control" name="to" id="to" value="<%=leave.getLeaveTo()%>" autocomplete="off" required/>
+    				<input type="text" class="form-control" name="to" id="to" value="<%=Util.sqlToJquery(leave.getLeaveTo())%>" autocomplete="off" required/>
     			</div>
     			<div class="form-group">
     				<label>Time off type</label>
@@ -50,7 +49,7 @@ String viewPath = ctx.getInitParameter("viewPath");
     			</div>
     			<div class="form-group">
     				<label>Duration</label>
-    				<input type="number" class="form-control" name="duration" id="duration" required/>
+    				<input type="number" class="form-control" name="duration" id="duration" value="<%=Util.getDaysNoWeekends(leave.getLeaveFrom(), leave.getLeaveTo())  %>" required/>
     			</div>
     			<button type="submit" class="form-btn" id="submit" >Update leave request</button>
     		</form>

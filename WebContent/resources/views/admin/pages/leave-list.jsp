@@ -56,7 +56,7 @@ String viewPath = ctx.getInitParameter("viewPath");
 						<td><%=u.getFname() %></td>
 						<td><%=dpt.getAppliedDate()%></td>
 						<td><%=dpt.getStatus()%></td>
-						<td><%=Util.getDays(dpt.getLeaveFrom(),dpt.getLeaveTo())%></td>
+						<td><%=Util.getDaysNoWeekends(dpt.getLeaveFrom(),dpt.getLeaveTo())%></td>
 						<td>
 							<!-- <a href="<%=baseUrl%>admin-edit-leave.htm?id=<%=dpt.getId()%>">Edit</a> --> 
 							<a href="<%=baseUrl%>admin-remove-leave.htm?id=<%=dpt.getId()%>">Remove</a>

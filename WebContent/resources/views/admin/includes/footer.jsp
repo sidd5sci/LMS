@@ -10,6 +10,6 @@
 </div>
 
 
-<div class="alert" style="display:none;">
+<div class="alert" >
 	<p>${message}</p>
 </div>

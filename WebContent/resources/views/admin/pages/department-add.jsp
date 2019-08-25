@@ -6,15 +6,15 @@
 		<div class="col-md-3"></div>
 		<div class="col-md-6">
 				<div class="alert-message"></div>
-			    <form action="admin-add-department-db.htm" method="post">
+			    <form action="admin-add-department-db.htm" id="departmentForm" onsubmit = "return(departmentValidate(event));" method="post">
 			      	
 			    	<div class="form-group">
 			    		<label>Department Name *</label>
-			    		<input type="text" name="departmentName" class="form-control" id="" placeholder="" required> 
+			    		<input type="text" name="departmentName" id="departmentName" class="form-control"  placeholder="" required> 
 			    	</div>
 			    	<div class="form-group">
 			    		<label>Department description</label>
-			    		<textarea class="form-control" name="departmentDesc"></textarea>
+			    		<textarea class="form-control" name="departmentDesc" id="departmentDesc"></textarea>
 			    	</div>
 			    	
 			    	<button type="submit" class="form-btn">Add department</button>

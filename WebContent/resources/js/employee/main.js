@@ -106,7 +106,7 @@ $(document).ready(function(){
 	function total(){
 	    var start= $("#from").datepicker("getDate");
 	    var end= $("#to").datepicker("getDate");
-	    days = (end- start) / (1000 * 60 * 60 * 24);
+	    days = (end- start) / (1000 * 60 * 60 * 24) + 1;
 	    
 	    let i=0,daysTotal = days;
 	    var temp = new Date();
@@ -134,7 +134,7 @@ $(document).ready(function(){
 		 ValidateLeave(e);
 	});
 	
-	
+	/*Leave form validation*/
 	function ValidateLeave(e){
 		  	let url = $("#url").val();
     		let uid = $("#user").val();
@@ -150,7 +150,7 @@ $(document).ready(function(){
     				console.log("res:",result);
     				valid = result;
     			}  			
-    			/*Leave form validation*/ 
+    			 
 					
 				let leaveType = $("#leavetype").val();
 				let form = $("#from").val();
@@ -158,13 +158,14 @@ $(document).ready(function(){
 				let timeOff = $("#timeOff").val();
 				let duration = $("#duration").val();
 				let department = $("#department").val();
-				 alert = $(".alert-message");
+				alert = $(".alert-message");
+				 
 				let type = $("#leaveForm").attr("data-type");
-    				let flag = 0;
+    			let flag = 0;
  
-    				if(leaveType <= 0 || leaveType == undefined){
-    						
-    					alert.html("Leave type is not selected !!");
+    			if(leaveType <= 0 || leaveType == undefined){
+    					
+    				alert.html("Leave type is not selected !!");
 					alert.addClass("danger");
 					alert.show();
 					flag = 1;
@@ -213,25 +214,44 @@ $(document).ready(function(){
 							"timeOffType:",timeOff,
 							"duration:",duration
 							);
-					
-					$.post(url+"employee-add-leave-db.htm",{
-						user:uid,
-						leaveType:leaveType,
-						department:department,
-						from:$("#from").val(),
-						to:to,
-						timeOffType:timeOff,
-						duration:duration,
-						},function(result){
-							
-							console.log("final:",result);
-							if(result != "" || result != "0"){
-								window.location.href=url+'employee-all-leaves.htm';
-							}
-							
-							
-							
-					});
+					if(type == 'create'){
+						
+						$.post(url+"employee-add-leave-db.htm",{
+							user:uid,
+							leaveType:leaveType,
+							department:department,
+							from:$("#from").val(),
+							to:to,
+							timeOffType:timeOff,
+							duration:duration,
+							},function(result){
+								
+								console.log("final:",result);
+								if(result != "" || result != "0"){
+									window.location.href=url+'employee-all-leaves.htm';
+								}
+																      
+						});
+					}else if(type == 'edit'){
+						$.post(url+"employee-edit-leave-db.htm",{
+							user:uid,
+							leaveType:leaveType,
+							department:department,
+							from:$("#from").val(),
+							to:to,
+							timeOffType:timeOff,
+							duration:duration,
+							id:$("#lid").val(),
+							},function(result){
+								
+								console.log("final:",result);
+								if(result != "" || result != "0"){
+									window.location.href=url+'employee-all-leaves.htm';
+								}
+     
+						});
+					}
+					  
 					
 					
 				}
@@ -241,8 +261,37 @@ $(document).ready(function(){
     		});
         	
 		
+	}// end validation
+	
+	
+	
+	/*message cookie handler*/
+	function getCookie(cname) {
+		  var name = cname + "=";
+		  var decodedCookie = decodeURIComponent(document.cookie);
+		  var ca = decodedCookie.split(';');
+		  for(var i = 0; i <ca.length; i++) {
+		    var c = ca[i];
+		    while (c.charAt(0) == ' ') {
+		      c = c.substring(1);
+		    }
+		    if (c.indexOf(name) == 0) {
+		      return c.substring(name.length, c.length);
+		    }
+		  }
+		  return "";
 	}
 	
+	let message = getCookie("message");	
+	console.log("message:",message);
+	if(message != "" && message != null){
+		$(".alert").css("display","block");
+		message = message.replace(/_/g, " ");
+		//message.replace('/\+/g', ' ');
+		console.log(message);
+		$(".alert").html(message);
+		
+	}
 
 	
 	

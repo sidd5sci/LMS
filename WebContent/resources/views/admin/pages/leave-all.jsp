@@ -22,8 +22,9 @@ List<Object> users = (ArrayList) request.getAttribute("users");
 		<label>Status</label>
 		<select name="status">
 			<option value="">Select ...</option>
-			<option value="pending">pending</option>
-			<option value="approved">approved</option>
+			<option value="rejected">Rejected</option>
+			<option value="pending">Pending</option>
+			<option value="approved">Approved</option>
 		</select>
 		<label>Employee</label>
 		<select name="uid">
@@ -33,6 +34,7 @@ List<Object> users = (ArrayList) request.getAttribute("users");
 			<%} %>
 		</select>
 		<button type="submit" class="form-btn">Apply filter</button>
+		
 	</form>
 </div>
 
@@ -83,7 +85,7 @@ List<Object> users = (ArrayList) request.getAttribute("users");
 						<td><%=u.getFname() %></td>
 						<td><%=dpt.getAppliedDate()%></td>
 						<td><%=dpt.getStatus()%></td>
-						<td><%=Util.getDays(dpt.getLeaveFrom(),dpt.getLeaveTo())%></td>
+						<td><%=Util.getDaysNoWeekends(dpt.getLeaveFrom(),dpt.getLeaveTo())%></td>
 						<td>
 							<%if(dpt.getStatus().equals("pending")){ %>
 								<!-- <a href="<%=baseUrl%>admin-edit-leave.htm?id=<%=dpt.getId()%>">Edit</a> -->

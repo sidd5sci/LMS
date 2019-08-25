@@ -3,6 +3,7 @@ package com.frapwise.controllers;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -14,11 +15,18 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.frapwise.entities.Leave;
+import com.frapwise.entities.User;
 import com.frapwise.entities.UserLeaveMapper;
+import com.frapwise.exceptions.LeaveException;
+import com.frapwise.exceptions.UserException;
 import com.frapwise.models.DepartmentModel;
 import com.frapwise.models.LeaveModel;
 import com.frapwise.models.UserLeaveMapperModel;
+import com.frapwise.models.UserModel;
+import com.frapwise.routes.ApiRoutes;
+import com.frapwise.utils.Util;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
@@ -30,25 +38,14 @@ import java.util.*;
  * Servlet implementation class ApiController
  */
 @WebServlet("*.api")
-public class ApiController extends HttpServlet {
+public class ApiController extends HttpServlet implements ApiRoutes{
 	private static final long serialVersionUID = 1L;
 
-	private final static String GET_AVAILIBLE_LEAVE_BY_USER_LEAVETYPE = "get-availible-leaves-by-user-leavetype.api";
-	private final static String GET_LEAVE_STATUS_BY_USER_DATE = "get-leave-status-user-date.api";
-	private final static String GET_USERS_BY_DEPARTMENT = "get-users-by-department.api";
-	private final static String UPLOAD_FILE = "admin-upload-file.api";
-	private final static String CHECK_DEPARTMENT_EXISIT = "check_department-exisit";
-	private final static String CHECK_EMAIL_EXISIT = "check-email-exisit.api";
-	private final static String CHECK_LEAVETYPE_EXISIT = "check-leavetype-exisit.api";
-	
-	
-	
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
 	public ApiController() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -106,31 +103,57 @@ public class ApiController extends HttpServlet {
 		} else if (requestUrl.endsWith(GET_LEAVE_STATUS_BY_USER_DATE)) {
 
 			LeaveModel lModel = new LeaveModel();
-			List<Leave> leaves = lModel.getLeavesByUser(Integer.parseInt(request.getParameter("uid")));
+			List<Leave> leaves = null;
+			try {
+				leaves = lModel.getLeavesByUser(Integer.parseInt(request.getParameter("uid")));
+			} catch (NumberFormatException | LeaveException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			String from = request.getParameter("from");
 			String to = request.getParameter("to");
 			int flag = 1;
 
 			for (Leave l : leaves) {
-				if (l.getLeaveFrom().equals(from)) {
-					flag = 0;
+				
+				if(!l.getStatus().equals("rejected")) {
+					flag = Util.getDatesCollision(l, from, to);
+					
+//					if (l.getLeaveFrom().equals(from)) {
+//						flag = 0;
+//					}
+//					if (l.getLeaveTo().equals(to)) {
+//						flag = 2;
+//					}
 				}
-				System.out.println(l.getLeaveFrom() + "|" + from + ">>" + flag);
-				if (l.getLeaveTo().equals(to)) {
-					flag = 2;
-				}
-				System.out.println(l.getLeaveTo() + "|" + to + ">>" + flag);
+							
+				
+				
 			}
-			if (flag == 1) {
-				// no leave with same starting or ending dates
-				out.println(flag);
-			} else {
-				// leave with same starting or ending dates found
-				out.println(flag);
-			}
+			
+			out.println(flag);
+			
 
 		}          
 		else if (requestUrl.endsWith(GET_USERS_BY_DEPARTMENT)) {
+			UserModel userModel = new UserModel();
+			List<User> users = null;
+			try {
+				users = userModel.getUserByDepartmentId(Integer.parseInt(request.getParameter("departmentId")));
+			} catch (NumberFormatException | UserException e) {
+				// TODO Auto-generated catch block
+				out.println("Error occured");
+			}
+			StringBuilder JSON = new StringBuilder("{\"result\":[ ");
+			for(User u:users) {
+				
+				JSON.append(Util.encodeJson(u));
+				JSON.append(",");
+			}
+			
+			JSON.setCharAt(JSON.length()-1, ' ');
+			JSON.append("]}");
+			out.println(JSON.toString());
 			
 		}
 		else if(requestUrl.endsWith(CHECK_DEPARTMENT_EXISIT)) {

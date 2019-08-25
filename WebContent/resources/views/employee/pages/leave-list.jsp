@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"
-        import="java.util.*,com.frapwise.entities.*,com.frapwise.models.*"%>
+        import="java.util.*,com.frapwise.entities.*,com.frapwise.models.*,com.frapwise.utils.*"%>
 
     
 <%
@@ -73,7 +73,7 @@ String viewPath = ctx.getInitParameter("viewPath");
 						<td><%=u.getFname() %></td>
 						<td><%=dpt.getAppliedDate()%></td>
 						<td><%=dpt.getStatus()%></td>
-						<td>2</td>
+						<td><%=Util.getDaysNoWeekends(dpt.getLeaveFrom(), dpt.getLeaveTo())%></td>
 						<td>
 							<% if(dpt.getStatus().equals("pending")){ %>
 								<a href="<%=baseUrl%>employee-edit-leave.htm?id=<%=dpt.getId()%>">Edit</a> 

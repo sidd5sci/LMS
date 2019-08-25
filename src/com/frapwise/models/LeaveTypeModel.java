@@ -49,8 +49,11 @@ public class LeaveTypeModel implements LeaveTypeDao{
 				flag = this.prep.executeUpdate();
 			}
 			
-		}catch(Exception e) {
-			
+		}catch(SQLException e) {
+			throw new LeaveTypeException("Leavetype exception occured");
+		}
+		catch(Exception e) {
+			throw new LeaveTypeException("Leavetype exception occured");
 		}
 		
 		return flag;
@@ -66,7 +69,10 @@ public class LeaveTypeModel implements LeaveTypeDao{
 			this.prep.setInt(1, id);
 			flag = this.prep.executeUpdate();
 		}catch(SQLException e) {
-			e.printStackTrace();
+			throw new LeaveTypeException("Leavetype exception occured");
+		}
+		catch(Exception e) {
+			throw new LeaveTypeException("Leavetype exception occured");
 		}
 		return flag;
 	}
@@ -83,7 +89,10 @@ public class LeaveTypeModel implements LeaveTypeDao{
 			this.prep.setInt(3,d.getId());
 			flag = this.prep.executeUpdate();
 		}catch(SQLException e) {
-			e.printStackTrace();
+			throw new LeaveTypeException("Leavetype exception occured");
+		}
+		catch(Exception e) {
+			throw new LeaveTypeException("Leavetype exception occured");
 		}
 		return flag;
 	}
@@ -103,13 +112,16 @@ public class LeaveTypeModel implements LeaveTypeDao{
 				leavetypes.add(d);
 			}
 		}catch(SQLException e) {
-			e.printStackTrace();
+			throw new LeaveTypeException("Leavetype exception occured");
+		}
+		catch(Exception e) {
+			throw new LeaveTypeException("Leavetype exception occured");
 		}
 		return leavetypes;
 	}
 
 	@Override
-	public LeaveType getLeaveTypeById(int id) {
+	public LeaveType getLeaveTypeById(int id) throws LeaveTypeException {
 		// TODO Auto-generated method stub
 		LeaveType dpt = new LeaveType();
 		try {
@@ -121,8 +133,11 @@ public class LeaveTypeModel implements LeaveTypeDao{
 				dpt.setName(this.result.getString("name"));
 				dpt.setDescription(this.result.getString("description"));
 			}
-		}catch(Exception e) {
-			e.printStackTrace();
+		}catch(SQLException e) {
+			throw new LeaveTypeException("Leavetype exception occured");
+		}
+		catch(Exception e) {
+			throw new LeaveTypeException("Leavetype exception occured");
 		}
 		return dpt;
 	}
