@@ -2,28 +2,34 @@
     pageEncoding="ISO-8859-1"
     import="java.util.*,com.frapwise.entities.*"%>
 
+<%
+ServletContext ctx = getServletContext();
+String baseUrl = ctx.getInitParameter("url");
+String viewPath = ctx.getInitParameter("viewPath");
+%>
     <div class="row">
     
     	<div class="col-md-3"></div>
     	<div class="col-md-6">
     		<div class="alert-message"></div>
     		<form action="admin-add-employee-db.htm" method="post">
-    		
+    			
+    			<input type="hidden" name="url" id="url" value="<%=baseUrl%>"/>
     			<div class="form-group">
 		    		<label>Employee first name *</label>
-		    		<input type="text" name="fname" class="form-control" id="" placeholder="Enter first name" required> 
+		    		<input type="text" name="fname" class="form-control" id="fname" placeholder="Enter first name" required> 
 		    	</div>
 		    	<div class="form-group">
 		    		<label>Employee last name *</label>
-		    		<input type="text" name="lname" class="form-control" id="" placeholder="Enter last name" required> 
+		    		<input type="text" name="lname" class="form-control" id="lname" placeholder="Enter last name" required> 
 		    	</div>
 		    	<div class="form-group">
 		    		<label>Employee username *</label>
-		    		<input type="text" name="username" class="form-control" id="" placeholder="username" required> 
+		    		<input type="text" name="username" class="form-control" id="username" autocomplete="off" placeholder="username" required> 
 		    	</div>
 		    	<div class="form-group">
 		    		<label>Employee email *</label>
-		    		<input type="email" name="email" class="form-control" id="" placeholder="Email" required> 
+		    		<input type="email" name="email" class="form-control" id="email" placeholder="Email" required> 
 		    	</div>
 		    	<div class="form-group">
 		    		<label>Employee password *</label>

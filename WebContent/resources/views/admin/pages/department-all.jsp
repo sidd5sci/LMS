@@ -11,7 +11,7 @@ String viewPath = ctx.getInitParameter("viewPath");
 %>
     <div class="data-tables">
     
-    <table>
+    <table id="dataTable">
     
     	<thead>
     		<th>Id</th>

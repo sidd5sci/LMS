@@ -1,5 +1,8 @@
 package com.frapwise.utils;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.text.ParseException;
@@ -7,8 +10,17 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.frapwise.entities.Leave;
+import com.frapwise.vo.ReportVO;
 
 public class Util {
 
@@ -283,4 +295,53 @@ public class Util {
 	    chars[index] = replace;
 	    return String.valueOf(chars);       
 	}
+	/**
+	 * read Excel header
+	 * @String filename
+	 * @throws IOException 
+	 */
+	@SuppressWarnings("deprecation")
+	public static int readerExcelHeader(String filename) throws IOException {
+		
+		try {
+			FileInputStream fin = new FileInputStream(new File("D:\\siddhartha\\Siddhartha\\My_works\\java_web\\LeaveManagmentSystem\\WebContent\\resources\\uploads\\"+filename));
+		
+			// workbook instance
+			XSSFWorkbook wb = new XSSFWorkbook(fin);
+			//create sheet
+			XSSFSheet sheet = wb.getSheetAt(0);
+			
+			// 
+			FormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
+		
+			for(Row row : sheet) {
+				for(Cell cell: row) {
+					
+					switch(formulaEvaluator.evaluateInCell(cell).getCellType()) {
+						case Cell.CELL_TYPE_BLANK:
+							System.out.print("empty"+"\t");
+							break;
+						
+						case Cell.CELL_TYPE_STRING:
+							System.out.print(cell.getStringCellValue()+"\t");
+							
+							break;
+					}
+				}
+				System.out.println(" ");
+			}
+		
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		
+		
+		
+		return 0;
+		
+	}
+	
 }

@@ -29,8 +29,8 @@ public interface Queries {
 		public final static String REJECT_LEAVE				= "UPDATE leaves SET status = ? WHERE id = ?";
 		// getters
 		public final static String GET_LEAVE_BY_ID 			= "SELECT * FROM leaves WHERE id = ?";
-		public final static String GET_ALL_LEAVES			= "SELECT * FROM leaves";
-		public final static String GET_LEAVE_BY_TODAY		= "SELECT * FROM leaves WHERE leave_from = ?"; 
+		public final static String GET_ALL_LEAVES			= "SELECT * FROM leaves WHERE status != 'rejected'";
+		public final static String GET_LEAVE_BY_TODAY		= "SELECT * FROM leaves WHERE leave_from = ? AND status != 'rejected' "; 
 		public final static String GET_LEAVE_BY_APPLIED 	= "SELECT * FROM leaves WHERE applied_from = ?";
 		public final static String GET_LEAVE_BY_DATES 		= "SELECT * FROM leaves WHERE leave_from > ? and leave_to < ?";
 		public final static String GET_LEAVE_BY_USER		= "SELECT * FROM leaves WHERE user_id = ?";
@@ -80,6 +80,9 @@ public interface Queries {
 		public final static String GET_USER_BY_STATUS 		= "SELECT * FROM users WHERE status = ?";
 		public final static String GET_USER_BY_DEPARTMENT	= "SELECT * FROM users WHERE department_id = ?";
 		public final static String GET_DISABLED_USER 		= "SELECT * FROM users WHERE status = 'disbaled'";
+		public final static String CHECK_USERNAME			= "SELECT * FROM users WHERE username = ?";
+		public final static String CHECK_EMAIL				= "SELECT * FROM users WHERE email = ?";
+		
 		
 		/**
 		 * UserLeaveMapper Model

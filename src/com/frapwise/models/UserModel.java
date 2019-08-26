@@ -61,7 +61,9 @@ public class UserModel implements UserDao,Queries{
 			this.prep.setInt(1, id);
 			flag = this.prep.executeUpdate();
 		}catch(SQLException e) {
-			e.printStackTrace();
+			throw new UserException("User exception occured");
+		}catch(Exception e) {
+			throw new UserException("User exception occured");	
 		}
 		return flag;
 	}
@@ -77,7 +79,9 @@ public class UserModel implements UserDao,Queries{
 			this.prep.setInt(10,u.getId());
 			flag = this.prep.executeUpdate();
 		}catch(SQLException e) {
-			e.printStackTrace();
+			throw new UserException("User exception occured");
+		}catch(Exception e) {
+			throw new UserException("User exception occured");	
 		}
 		return flag;
 	}
@@ -95,7 +99,9 @@ public class UserModel implements UserDao,Queries{
 				users.add(u);
 			}
 		}catch(SQLException e) {
-			e.printStackTrace();
+			throw new UserException("User exception occured");
+		}catch(Exception e) {
+			throw new UserException("User exception occured");	
 		}
 		return users;
 	}
@@ -119,7 +125,9 @@ public class UserModel implements UserDao,Queries{
 			}
 			
 		}catch(SQLException e) {
-			e.printStackTrace();
+			throw new UserException("User exception occured");
+		}catch(Exception e) {
+			throw new UserException("User exception occured");	
 		}
 		return u;
 	}
@@ -168,7 +176,9 @@ public class UserModel implements UserDao,Queries{
 				
 			}
 		}catch(SQLException e) {
-			e.printStackTrace();
+			throw new UserException("User exception occured");
+		}catch(Exception e) {
+			throw new UserException("User exception occured");	
 		}
 		return u;
 	}
@@ -230,6 +240,27 @@ public class UserModel implements UserDao,Queries{
 		return users;
 	}
 	
+	public int checkUsernameExist(String username) {
+		int flag = 0;
+		try {
+			
+			this.prep = this.conn.prepareStatement(CHECK_USERNAME);
+			this.prep.setString(1, username);
+			this.result = this.prep.executeQuery();
+			if(result.next() == false) {
+				
+				System.out.println("ResultSet in empty"); 
+				
+			}else {
+				flag = 1;
+			}
+			
+		}catch(SQLException e) {
+			
+			e.printStackTrace();
+		}
+		return flag;
+	}
 	protected void setParam(PreparedStatement stmt,User u) throws SQLException {
 		stmt.setString(1, u.getFname());
 		stmt.setString(2, u.getLname());

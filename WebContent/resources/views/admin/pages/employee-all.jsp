@@ -12,7 +12,7 @@ DepartmentModel dptModel = new DepartmentModel();
 %>
     <div class="data-tables">
     
-    <table>
+    <table id="dataTable">
     
     	<thead>
     		<th>Id</th>

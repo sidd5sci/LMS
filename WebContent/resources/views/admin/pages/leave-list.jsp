@@ -61,9 +61,11 @@ String viewPath = ctx.getInitParameter("viewPath");
 						<td><%=dpt.getStatus()%></td>
 						<td><%=Util.getDaysNoWeekends(dpt.getLeaveFrom(),dpt.getLeaveTo())%></td>
 						<td>
-							<!-- <a href="<%=baseUrl%>admin-edit-leave.htm?id=<%=dpt.getId()%>">Edit</a> --> 
-							<a href="<%=baseUrl%>admin-remove-leave.htm?id=<%=dpt.getId()%>">Remove</a>
-							<a href="<%=baseUrl%>admin-leave-approve.htm?id=<%=dpt.getId()%>">Approve</a>
+							<%if(dpt.getStatus().equals("pending")){ %>
+								<!-- <a href="<%=baseUrl%>admin-edit-leave.htm?id=<%=dpt.getId()%>">Edit</a> -->
+								<a href="<%=baseUrl%>admin-reject-leave.htm?id=<%=dpt.getId()%>">Reject</a>
+								<a href="<%=baseUrl%>admin-leave-approve.htm?id=<%=dpt.getId()%>">Approve</a>
+							<%} %>
 						</td>
 				</tr>
 			<%}%>

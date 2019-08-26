@@ -2,6 +2,7 @@ package com.frapwise.controllers;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.ParseException;
@@ -14,15 +15,18 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.frapwise.entities.Leave;
+import com.frapwise.entities.Sheet;
 import com.frapwise.entities.User;
 import com.frapwise.entities.UserLeaveMapper;
 import com.frapwise.exceptions.LeaveException;
 import com.frapwise.exceptions.UserException;
 import com.frapwise.models.DepartmentModel;
 import com.frapwise.models.LeaveModel;
+import com.frapwise.models.SheetModel;
 import com.frapwise.models.UserLeaveMapperModel;
 import com.frapwise.models.UserModel;
 import com.frapwise.routes.ApiRoutes;
@@ -158,14 +162,39 @@ public class ApiController extends HttpServlet implements ApiRoutes{
 			out.println(JSON.toString());
 			
 		}
-		else if(requestUrl.endsWith(CHECK_DEPARTMENT_EXISIT)) {
+		else if(requestUrl.endsWith(CHECK_DEPARTMENT_EXIST)) {
 			DepartmentModel dptModel = new DepartmentModel();
 			
 			//dptModel.checkDepartmentExisit();
 		}
 		else if(requestUrl.endsWith(UPLOAD_FILE)) {
-			this.upload(request, response);
+			
+			String fileName = request.getParameter("file_name");
+			Part myfile = request.getPart("file2");
+			
+			System.out.println(request.getParameter("file_name"));
+			
+			InputStream input = null;
+			if(myfile != null) {
+				long fileSize = myfile.getSize();
+				String fileContent = myfile.getContentType();
+				input = myfile.getInputStream();
+			}
+			//this.upload(request, response);
+			SheetModel sheetModel = new  SheetModel();
+			Sheet sheet = new Sheet();
+			
+			sheet.setSheet(input);
+			
+			sheetModel.add(sheet);
+			
+			
 		}
+		else if(requestUrl.endsWith(CHECK_USERNAME_EXIST)) {
+			
+			
+		}
+		
 
 	}// end process
 

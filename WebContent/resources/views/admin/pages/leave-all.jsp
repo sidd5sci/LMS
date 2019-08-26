@@ -34,7 +34,7 @@ List<Object> users = (ArrayList) request.getAttribute("users");
 			<%} %>
 		</select>
 		<button type="submit" class="form-btn">Apply filter</button>
-		
+		<a href="<%=baseUrl%>admin-all-leaves.htm" class="form-btn"/>Reset</a>
 	</form>
 </div>
 

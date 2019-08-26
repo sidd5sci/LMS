@@ -210,6 +210,9 @@ Description: Main css of leave managment system
  }
  #dataTable th{
  	background:#ccc;
+ 	    /* background: #639; */
+    color: #fff;
+    padding: 5px;
  }
  #dataTable tr{
  	min-height:50px;

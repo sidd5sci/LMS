@@ -442,6 +442,27 @@ $(document).ready(function(){
 		}
 		e.preventdefault();
 	}
+	/*check username and email*/ 
+	var Timer,value;
+	$("#username").keyup(function(){
+	      
+	      clearTimeout(Timer);
+	      Timer = setTimeout(addData,700);
+	    
+	    
+	});
+	
+	function addData(){
+		let username = $("#username").val();
+		let url = $("#url").val();
+	    $.post(url+"check-username-exist.api",{username:username},function(result){
+	        
+	        console.log(result);
+	        if(result == "1"){
+	        	console.log("username exist");
+	        }
+	    });
+	}
 	/*message cookie handler*/
 	function getCookie(cname) {
 		  var name = cname + "=";
@@ -469,6 +490,27 @@ $(document).ready(function(){
 		$(".alert").html(message);
 		
 	}
+	
+	
+	
+	/*Report download file*/
+	/*function dowloadReport(){
+		
+		const blob = new Blob(["this is a file"],{type:"text/plain"});
+		downloadExcel(blob,"Reprot.xls");
+	}
+	
+	function downloadExcel(blob,filname){
+		
+		const url = window.URL.createObjectURL(blob);
+		const a = document.createElement("a");
+		a.href= url;
+		a.download = filename;
+		a.click();
+		a.remove();
+		document.addEventListener("focus", => {window.URL.revokeObjectURL(blob)});
+	}*/
+	
 	
 	
 });

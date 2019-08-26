@@ -1191,7 +1191,9 @@ public class FrontController extends HttpServlet implements WebRoutes {
 				int flag = leaveModel.reject(Integer.parseInt(request.getParameter("id")));
 				if (flag == 1) {
 					ulmModel.updateLeaveByUserAndLeaveType(leave.getUserId(), leave.getLeaveTypeId(),
-							(int) Util.getDays(leave.getLeaveFrom(), leave.getLeaveTo()), "-");
+							(int) Util.getDaysNoWeekends(leave.getLeaveFrom(), leave.getLeaveTo()), "-");
+				
+				
 				}
 
 				response.addCookie(cookie);
@@ -1288,6 +1290,8 @@ public class FrontController extends HttpServlet implements WebRoutes {
 				request.setAttribute("pageName", "leave-upload");
 				RequestDispatcher rd = request.getRequestDispatcher(path + "admin/index.jsp");
 				rd.forward(request, response);
+				
+				//Util.readerExcelHeader("report.xlsx");
 
 			}
 		}
