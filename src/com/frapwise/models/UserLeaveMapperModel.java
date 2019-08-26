@@ -15,6 +15,7 @@ import com.frapwise.dao.UserLeaveMapperDao;
 import com.frapwise.db.DB;
 import com.frapwise.entities.Leave;
 import com.frapwise.entities.UserLeaveMapper;
+import com.frapwise.utils.Util;
 
 public class UserLeaveMapperModel implements UserLeaveMapperDao,Queries{
 
@@ -109,9 +110,21 @@ public class UserLeaveMapperModel implements UserLeaveMapperDao,Queries{
 	}
 
 	@Override
-	public int setLeaveMaxByUser(int uid, int maxValue) {
+	public int setLeaveMaxById(int id,UserLeaveMapper ulm) throws ParseException {
 		// TODO Auto-generated method stub
-		return 0;
+		UserLeaveMapper l = new UserLeaveMapper();
+		Integer flag = 0;
+		try {
+			this.prep = this.conn.prepareStatement(UPDATE_LEAVEMAPPER_BY_ID);
+			this.prep.setDate(1,Util.jqueryToSql(ulm.getLeaveFrom()));
+			this.prep.setDate(2,Util.jqueryToSql(ulm.getLeaveTo()));
+			this.prep.setInt(3, ulm.getLeaveMax());
+			this.prep.setInt(4, id);
+			flag = this.prep.executeUpdate();
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return flag;
 	}
 
 	@Override
@@ -166,6 +179,22 @@ public class UserLeaveMapperModel implements UserLeaveMapperDao,Queries{
 		return flag;
 	}
 	
+	public UserLeaveMapper getLeavemapperByLeaveTypeAndUser(int uid,int leaveTypeId) {
+		
+		UserLeaveMapper ulm = new UserLeaveMapper();
+		try {
+			this.prep = this.conn.prepareStatement(GET_LEAVEMAPPERS_BY_UID_LEAVETYPE);
+			this.prep.setInt(1, uid);
+			this.prep.setInt(2,leaveTypeId);
+			this.result = this.prep.executeQuery();
+			while(this.result.next()) {
+				this.setLeave(ulm, this.result);
+			}
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return ulm;
+	}
 	
 	@Override
 	public List<UserLeaveMapper> getLeaveMaxByUser(int uid) {
@@ -267,6 +296,11 @@ public class UserLeaveMapperModel implements UserLeaveMapperDao,Queries{
 		l.setLeaveFrom(rs.getString("assigned_from"));
 		l.setLeaveTo(rs.getString("assigned_to"));
 		l.setCreatedAt(rs.getString("created_at"));
+	}
+	@Override
+	public int setLeaveMaxByUser(int uid, int maxValue) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 	
 }

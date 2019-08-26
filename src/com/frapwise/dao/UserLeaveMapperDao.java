@@ -1,5 +1,6 @@
 package com.frapwise.dao;
 
+import java.text.ParseException;
 import java.util.List;
 
 import com.frapwise.entities.UserLeaveMapper;
@@ -92,5 +93,14 @@ public interface UserLeaveMapperDao extends Dao{
 	 * @return
 	 */
 	public List<UserLeaveMapper> getLeaveByUser(int uid);
+	/**
+	 * update the leavemapper by id
+	 * @param uid
+	 * @param maxValue
+	 * @param leaveType
+	 * @return
+	 * @throws ParseException 
+	 */
+	int setLeaveMaxById(int id,UserLeaveMapper ulm) throws ParseException;
 	
 }

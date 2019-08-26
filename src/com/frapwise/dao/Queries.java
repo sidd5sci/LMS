@@ -91,6 +91,7 @@ public interface Queries {
 		public final static String REMOVE_LEAVEMAPPER_BY_UID		= "DELETE FROM user_leave_maper WHERE uid = ?";
 		public final static String UPDATE_LEAVEMAPPER_N_BY_UID_L 	= "UPDATE user_leave_maper SET leave_taken = leave_taken - ?, leave_availible = leave_availible + ? WHERE uid = ? and leave_type_id = ? ";
 		public final static String UPDATE_LEAVEMAPPER_P_BY_UID_L	= "UPDATE user_leave_maper SET leave_taken = leave_taken + ?, leave_availible = leave_availible - ? WHERE uid = ? and leave_type_id = ? ";
+		public final static String UPDATE_LEAVEMAPPER_BY_ID			= "UPDATE user_leave_maper SET assigned_from = ?, assigned_to = ?, leave_max = ? WHERE id = ?";
 		// getters
 		public final static String GET_LEAVEMAPPER_BY_ID 			= "SELECT * FROM user_leave_maper WHERE id = ?";
 		public final static String GET_ALL_LEAVEMAPPERS				= "SELECT * FROM user_leave_maper";
@@ -100,5 +101,6 @@ public interface Queries {
 		public final static String GET_LEAVEMAPPER_BY_USER			= "SELECT * FROM user_leave_maper WHERE uid = ?";
 		public final static String GET_LEAVEMAPPER_BY_DEPARTMENT	= "SELECT * FROM user_leave_maper WHERE department_id = ?";
 		public final static String GET_LEAVEMAPPER_BY_LEAVETYPE		= "SELECT * FROM user_leave_maper WHERE leave_type_id = ?";
+		public final static String GET_LEAVEMAPPERS_BY_UID_LEAVETYPE= "SELECT * FROM user_leave_maper WHERE uid = ? and leave_type_id = ?";
 		
 }
