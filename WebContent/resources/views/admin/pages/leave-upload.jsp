@@ -4,7 +4,7 @@
 
 
 <h2>Excel File header</h2>
-<table>
+<table id="dataTable">
 
 	<thead>
 		<th>Leave Request</th>
