@@ -15,14 +15,16 @@ DepartmentModel dptModel = new DepartmentModel();
     <table id="dataTable">
     
     	<thead>
-    		<th>Id</th>
-    		<th>Name</th>
-    		<th>Username</th>
-    		<th>Home office</th>
-    		<th>Email</th>
-    		<th>Role</th>
-    		<th>department</th>
-    		<th>Action</th>
+    		<tr>
+	    		<th>Id</th>
+	    		<th>Name</th>
+	    		<th>Username</th>
+	    		<th>Home office</th>
+	    		<th>Email</th>
+	    		<th>Role</th>
+	    		<th>department</th>
+	    		<th>Action</th>
+	    	</tr>
     	</thead>
     	<tbody>
     	

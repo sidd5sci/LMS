@@ -14,10 +14,12 @@ String viewPath = ctx.getInitParameter("viewPath");
     <table id="dataTable">
     
     	<thead>
-    		<th>Id</th>
-    		<th>Name</th>
-    		<th>Description</th>
-    		<th>Action</th>
+    		<tr>
+	    		<th>Id</th>
+	    		<th>Name</th>
+	    		<th>Description</th>
+	    		<th>Action</th>
+	    	</tr>
     	</thead>
     	<tbody>
     	

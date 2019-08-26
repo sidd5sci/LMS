@@ -18,18 +18,20 @@ String viewPath = ctx.getInitParameter("viewPath");
     <table id="dataTable">
     
     	<thead>
-    		<th>Leave Request</th>
-    		<th>Employee name</th>
-    		<th>Home office</th>
-    		<th>Leave Type</th>
-    		<th>Department code</th>
-    		<th>Type of Time Off</th>
-    		<th>Dates</th>
-    		<th>Created by</th>
-    		<th>Created when</th>
-    		<th>Approval status</th>
-    		<th>Duration</th>
-    		<th>Action</th>
+    		<tr>
+	    		<th>Leave Request</th>
+	    		<th>Employee name</th>
+	    		<th>Home office</th>
+	    		<th>Leave Type</th>
+	    		<th>Department code</th>
+	    		<th>Type of Time Off</th>
+	    		<th>Dates</th>
+	    		<th>Created by</th>
+	    		<th>Created when</th>
+	    		<th>Approval status</th>
+	    		<th>Duration</th>
+	    		<th>Action</th>
+	    	</tr>
     	</thead>
     	<tbody>
     	

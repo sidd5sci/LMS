@@ -1,6 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"
-        import="java.util.*,com.frapwise.entities.*"%>
+        import="java.util.*,com.frapwise.entities.*"
+        
+        
+        %>
 
     
 <%
@@ -14,10 +17,12 @@ String viewPath = ctx.getInitParameter("viewPath");
     <table id="dataTable">
     
     	<thead>
-    		<th>Id</th>
-    		<th>Name</th>
-    		<th>Description</th>
-    		<th>Action</th>
+    		<tr>
+	    		<th>Id</th>
+	    		<th>Name</th>
+	    		<th>Description</th>
+	    		<th>Action</th>
+    		</tr>
     	</thead>
     	<tbody>
     	

@@ -47,12 +47,11 @@
 	<div class="col-md-6">
 
 		<form action="admin-upload-file.api" enctype="multipart/form-data" method="post">
-			Enter File Name <input type="text" class="form-control"
-				name="file_name"><br> Select 
-				<input type="file"
-				class="form-control" name="file2" /><br> 
-				<input type="submit"
-				class="form-btn" value="upload" />
+			Enter File Name 
+			<input type="text" class="form-control"	name="file_name"><br> 
+			Select 
+			<input type="file"	class="form-control" name="file2" accept=".xls,.xlsx"/><br> 
+			<input type="submit" class="form-btn" value="upload" />
 		</form>	
 
 	</div>

@@ -19,14 +19,14 @@ import javax.servlet.http.Part;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.frapwise.entities.Leave;
-import com.frapwise.entities.Sheet;
+
 import com.frapwise.entities.User;
 import com.frapwise.entities.UserLeaveMapper;
 import com.frapwise.exceptions.LeaveException;
 import com.frapwise.exceptions.UserException;
 import com.frapwise.models.DepartmentModel;
 import com.frapwise.models.LeaveModel;
-import com.frapwise.models.SheetModel;
+
 import com.frapwise.models.UserLeaveMapperModel;
 import com.frapwise.models.UserModel;
 import com.frapwise.routes.ApiRoutes;
@@ -169,24 +169,7 @@ public class ApiController extends HttpServlet implements ApiRoutes{
 		}
 		else if(requestUrl.endsWith(UPLOAD_FILE)) {
 			
-			String fileName = request.getParameter("file_name");
-			Part myfile = request.getPart("file2");
-			
-			System.out.println(request.getParameter("file_name"));
-			
-			InputStream input = null;
-			if(myfile != null) {
-				long fileSize = myfile.getSize();
-				String fileContent = myfile.getContentType();
-				input = myfile.getInputStream();
-			}
-			//this.upload(request, response);
-			SheetModel sheetModel = new  SheetModel();
-			Sheet sheet = new Sheet();
-			
-			sheet.setSheet(input);
-			
-			sheetModel.add(sheet);
+			upload(request,response);
 			
 			
 		}
@@ -201,6 +184,8 @@ public class ApiController extends HttpServlet implements ApiRoutes{
 	private void upload(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
 		String file_name = null;
+		String tempName = "";
+		
 		response.setContentType("text/html");
 		PrintWriter out = response.getWriter();
 		boolean isMultipartContent = ServletFileUpload.isMultipartContent(request);
@@ -226,14 +211,16 @@ public class ApiController extends HttpServlet implements ApiRoutes{
 					}
 				} else {
 					if (fileItem.getSize() > 0) {
-						fileItem.write(new File("D:\\siddhartha\\Siddhartha\\My_works\\java_web\\LeaveManagmentSystem\\WebContent\\resources\\uploads" + fileItem.getName()));
+						tempName = fileItem.getName();
+						
+						fileItem.write(new File("D:\\siddhartha\\Siddhartha\\My_works\\java_web\\LeaveManagmentSystem\\WebContent\\resources\\uploads\\excel\\" + fileItem.getName()));
 					}
 				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			response.sendRedirect("admin-upload-data.htm?file="+file_name);
+			response.sendRedirect("admin-upload-data.htm?file="+file_name+"&tmp="+tempName);
 		}
 	}
 }
