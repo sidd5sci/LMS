@@ -23,5 +23,8 @@ xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/
   	<param-value>resources/views/</param-value>
   </context-param>
   
-  
+   <context-param>
+  	<param-name>uploadPath</param-name>
+  	<param-value>D:\\siddhartha\\Siddhartha\\My_works\\java_web\\LeaveManagmentSystem\\WebContent\\resources\\uploads\\</param-value>
+  </context-param>
 </web-app>

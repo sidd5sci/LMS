@@ -137,4 +137,21 @@ public class DepartmentModel implements DepartmentDao,Queries{
 		return 0;
 	}
 
+	public int getDepartmentIdByName(String name) throws DepartmentException {
+		int id  = 0;
+		try {
+			this.prep = this.conn.prepareStatement(GET_DEPARTMENT_ID_BY_NAME);
+			this.prep.setString(1, name);
+			this.result = this.prep.executeQuery();
+			while(this.result.next()) {
+				id = this.result.getInt("id");
+				
+			}
+		}catch(SQLException e) {
+			throw new DepartmentException("Department exception occured");
+		}catch(Exception e) {
+			throw new DepartmentException("Department exception occured");
+		}
+		return id;
+	}
 }

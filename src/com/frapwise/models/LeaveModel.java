@@ -16,6 +16,8 @@ import com.frapwise.db.DB;
 import com.frapwise.entities.Leave;
 import com.frapwise.entities.User;
 import com.frapwise.exceptions.LeaveException;
+import com.frapwise.exceptions.UserException;
+import com.frapwise.utils.Util;
 
 public class LeaveModel implements LeaveDao,Queries{
 
@@ -355,6 +357,46 @@ public class LeaveModel implements LeaveDao,Queries{
 		return null;
 	}
 
+	
+	public int addBulkLeaves(List<Leave> leaves) throws LeaveException {
+		try {
+			
+			for(Leave l :leaves) {
+				
+				
+				this.prep = this.conn.prepareStatement(ADD_LEAVE);
+				this.setParam(this.prep,l);
+				this.prep.executeUpdate();
+			}
+			
+		}catch(Exception e) {
+			throw new LeaveException("Leave Exception occured "); 
+		}
+		
+		return 0;
+	}
+	public int isExist(Leave l) {
+		int flag = 1;
+		try {
+			this.prep = this.conn.prepareStatement(CHECH_IF_EXIST);
+			this.prep.setInt(1, l.getUserId());
+			this.prep.setDate(2, Util.jquery1ToSql(l.getLeaveFrom()) );
+			this.prep.setDate(3, Util.jquery1ToSql(l.getLeaveTo()) );
+			this.result = this.prep.executeQuery();
+			System.out.println(this.prep.toString());
+			if(result.next() == false) {
+				
+				System.out.println("ResultSet in empty"); 
+				flag = 0;
+			}
+		
+		}catch(SQLException e) {
+			
+		}
+		return flag;
+		
+		
+	}
 	protected void setParam(PreparedStatement stmt,Leave l) throws SQLException, ParseException {
 		SimpleDateFormat format = new SimpleDateFormat( "dd-M-yy" );
 //		SimpleDateFormat formatTime = new SimpleDateFormat( "yy-mm-dd HH:mm:ss" );

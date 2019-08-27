@@ -9,12 +9,10 @@ public class ReportVO {
 	private String departmentCode;
 	private String typeOfTimeOfF;
 	private String dates;
+	private String createdBy;
 	private String createdWhen;
 	private String approvalStatus;
 	private String duration;
-
-	
-	
 	
 	public ReportVO() {
 		
@@ -170,6 +168,13 @@ public class ReportVO {
 		this.duration = duration;
 	}
 
+	public String getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(String createdBy) {
+		this.createdBy = createdBy;
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -256,6 +261,10 @@ public class ReportVO {
 				+ typeOfTimeOfF + ", dates=" + dates + ", createdWhen=" + createdWhen + ", approvalStatus="
 				+ approvalStatus + ", duration=" + duration + "]";
 	}
+
+
+
+
 
 	
 }

@@ -208,7 +208,7 @@ $(document).ready(function(){
 				// send form by ajax
 				if(flag == 0){
 					alert.removeClass("danger");
-					
+					$(".form-btn").attr("disabled",true);
 					console.log("user:",uid,
 							"leaveType:",leaveType,
 							"department:",department,

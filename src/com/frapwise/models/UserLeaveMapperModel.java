@@ -156,7 +156,21 @@ public class UserLeaveMapperModel implements UserLeaveMapperDao,Queries{
 		// TODO Auto-generated method stub
 		return 0;
 	}
-
+	public int updateMaxLeavesByLeaveType(int lid,int inc) {
+		Integer flag = 0;
+		try {
+			// increase the leaves by @param inc
+			this.prep = this.conn.prepareStatement(UPDATE_LEAVEMAPPER_M_BY_LID);
+			this.prep.setInt(1, inc);
+			this.prep.setInt(2, lid);
+			
+			flag = this.prep.executeUpdate();
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return flag;
+		
+	}
 	public int updateLeaveByUserAndLeaveType(int uid,int leaveType,int duration,String opration) {
 		
 		Integer flag = 0;

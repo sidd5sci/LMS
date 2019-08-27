@@ -17,8 +17,8 @@ public interface Queries {
 		// getters
 		public final static String GET_DEPARTMENT_BY_ID 	= "SELECT * FROM departments WHERE id = ?";
 		public final static String GET_ALL_DEPARTMENTS 		= "SELECT * FROM departments";
-
-		/**
+		public final static String GET_DEPARTMENT_ID_BY_NAME = "SELECT * FROM departments WHERE name = ?";
+		/** 
 		 * Leave Model
 		 */
 		// Setters
@@ -37,18 +37,20 @@ public interface Queries {
 		public final static String GET_LEAVE_BY_USER_DATE	= "SELECT * FROM leaves WHERE user_id = ? and leave_from = ? or leave_to ";
 		public final static String GET_LEAVE_BY_DEPARTMENT	= "SELECT * FROM leaves WHERE department_id = ?";
 		public final static String GET_LEAVE_BY_LEAVETYPE	= "SELECT * FROM leaves WHERE leave_type_id = ?";
-		
+		public final static String CHECH_IF_EXIST			= "SELECT * FROM leaves WHERE user_id = ? AND leave_from = ? AND leave_to = ?";
 		/**
 		 * LeaveType Model
 		 */
 		// Setters
-		public final static String ADD_LEAVETYPE			= "INSERT INTO leave_types(id,name,description) VALUES(null,?,?)";
+		public final static String ADD_LEAVETYPE			= "INSERT INTO leave_types(id,name,default_value,description,period) VALUES(null,?,?,?,?)";
 		public final static String REMOVE_LEAVETYPE			= "DELETE FROM leave_types where id = ?";
-		public final static String UPDATE_LEAVETYPE			= "UPDATE leave_types SET name = ? , description = ? WHERE id = ?";
+		public final static String UPDATE_LEAVETYPE			= "UPDATE leave_types SET name = ? , default_value = ?, description = ?, period = ? WHERE id = ?";
+		public final static String UPDATE_LEAVETYPE_STATUS	= "UPDATE leave_types SET status = ? WHERE id = ?";
+		public final static String UPDATE_LEAVETYPE_RENEW	= "UPDATE leave_types SET last_renew_date = ? WHERE id = ?";
 		// getters
 		public final static String GET_LEAVETYPE_BY_ID 		= "SELECT * FROM leave_types WHERE id = ?";
 		public final static String GET_ALL_LEAVETYPE 		= "SELECT * FROM leave_types";
-		
+		public final static String GET_LEAVETYPE_ID_BY_NAME = "SELECT * FROM leave_types WHERE name = ?";
 		/**
 		 * Session Model
 		 */
@@ -82,7 +84,7 @@ public interface Queries {
 		public final static String GET_DISABLED_USER 		= "SELECT * FROM users WHERE status = 'disbaled'";
 		public final static String CHECK_USERNAME			= "SELECT * FROM users WHERE username = ?";
 		public final static String CHECK_EMAIL				= "SELECT * FROM users WHERE email = ?";
-		
+		public final static String GET_USER_BY_USERNAME		= "SELECT * FROM users WHERE username = ?";
 		
 		/**
 		 * UserLeaveMapper Model
@@ -95,6 +97,7 @@ public interface Queries {
 		public final static String UPDATE_LEAVEMAPPER_N_BY_UID_L 	= "UPDATE user_leave_maper SET leave_taken = leave_taken - ?, leave_availible = leave_availible + ? WHERE uid = ? and leave_type_id = ? ";
 		public final static String UPDATE_LEAVEMAPPER_P_BY_UID_L	= "UPDATE user_leave_maper SET leave_taken = leave_taken + ?, leave_availible = leave_availible - ? WHERE uid = ? and leave_type_id = ? ";
 		public final static String UPDATE_LEAVEMAPPER_BY_ID			= "UPDATE user_leave_maper SET assigned_from = ?, assigned_to = ?, leave_max = ? WHERE id = ?";
+		public final static String UPDATE_LEAVEMAPPER_M_BY_LID		= "UPDATE user_leave_maper SET leave_availible = leave_availible + ? WHERE leave_type_id = ?";
 		// getters
 		public final static String GET_LEAVEMAPPER_BY_ID 			= "SELECT * FROM user_leave_maper WHERE id = ?";
 		public final static String GET_ALL_LEAVEMAPPERS				= "SELECT * FROM user_leave_maper";

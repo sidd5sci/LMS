@@ -40,6 +40,7 @@ public final static String HOME 					= "home.htm";
 		public final static String ADMIN_EDIT_LEAVETYPE	 		= "admin-edit-leavetype.htm";
 		public final static String ADMIN_EDIT_LEAVETYPE_DB	 	= "admin-edit-leavetype-db.htm";
 		public final static String ADMIN_REMOVE_LEAVETYPE   	= "admin-remove-leavetype.htm";
+		public final static String ADMIN_RENEW_LEAVETYPE		= "admin-renew-leavetype.htm";
 		// employees
 		public final static String ADMIN_ADD_EMPLOYEE	    	= "admin-add-employee.htm";
 		public final static String ADMIN_ADD_EMPLOYEE_DB	 	= "admin-add-employee-db.htm";

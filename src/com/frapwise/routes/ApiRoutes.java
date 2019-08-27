@@ -10,4 +10,7 @@ public interface ApiRoutes {
 	public final static String CHECK_EMAIL_EXIST 						= "check-email-exist.api";
 	public final static String CHECK_LEAVETYPE_EXIST 					= "check-leavetype-exist.api";
 	public final static String CHECK_USERNAME_EXIST 					= "check-username-exist.api";
+	public final static String APPLY_UPLOADED_FILE						= "apply-file.api";
+
+
 }
