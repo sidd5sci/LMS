@@ -10,8 +10,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,7 +25,9 @@ import com.frapwise.entities.Leave;
 
 import com.frapwise.entities.User;
 import com.frapwise.entities.UserLeaveMapper;
+import com.frapwise.exceptions.DepartmentException;
 import com.frapwise.exceptions.LeaveException;
+import com.frapwise.exceptions.LeaveTypeException;
 import com.frapwise.exceptions.UserException;
 import com.frapwise.models.DepartmentModel;
 import com.frapwise.models.LeaveModel;
@@ -31,6 +36,7 @@ import com.frapwise.models.UserLeaveMapperModel;
 import com.frapwise.models.UserModel;
 import com.frapwise.routes.ApiRoutes;
 import com.frapwise.utils.Util;
+import com.frapwise.vo.ReportVO;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
@@ -61,7 +67,12 @@ public class ApiController extends HttpServlet implements ApiRoutes{
 		// TODO Auto-generated method stub
 
 		try {
-			this.process(request, response);
+			try {
+				this.process(request, response);
+			} catch (LeaveException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -76,7 +87,12 @@ public class ApiController extends HttpServlet implements ApiRoutes{
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		try {
-			this.process(request, response);
+			try {
+				this.process(request, response);
+			} catch (LeaveException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -84,11 +100,15 @@ public class ApiController extends HttpServlet implements ApiRoutes{
 	}
 
 	private void process(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException, ParseException {
+			throws ServletException, IOException, ParseException, LeaveException {
 
 		String requestUrl = request.getRequestURI();
 		System.out.println(requestUrl);
 		PrintWriter out = response.getWriter();
+		ServletContext ctx = request.getServletContext();
+		String path = ctx.getInitParameter("viewPath");
+		String url = ctx.getInitParameter("url");
+		String uploadPath = ctx.getInitParameter("uploadPath");
 
 		if (requestUrl.endsWith(GET_AVAILIBLE_LEAVE_BY_USER_LEAVETYPE)) {
 
@@ -167,11 +187,62 @@ public class ApiController extends HttpServlet implements ApiRoutes{
 			
 			//dptModel.checkDepartmentExisit();
 		}
+		/**
+		 * upload file
+		 */
 		else if(requestUrl.endsWith(UPLOAD_FILE)) {
 			
-			upload(request,response);
+			String fileName = upload(request,response);
+			if(fileName.length() > 0 ) {
+				List<ReportVO> report = Util.readerExcelFile(fileName);
+				
+				request.setAttribute("report", report);
+			}
+			request.setAttribute("filename", fileName);
+			request.setAttribute("pageName", "leave-upload-check");
+			RequestDispatcher rd = request.getRequestDispatcher(path + "admin/index.jsp");
+			rd.forward(request, response);
 			
+		}
+		/**
+		 * 
+		 */
+		else if(requestUrl.endsWith(APPLY_UPLOADED_FILE)) {
+			String filename = request.getParameter("filename");
+			LeaveModel lModel = new LeaveModel();
+			Cookie cookie = new Cookie("message","File_uploaded_successfully");
+			cookie.setMaxAge(10);
+			if(filename.length() > 0 ) {
+				List<ReportVO> report = Util.readerExcelFile(filename);
+				List<Leave> leaves = null;
+				try {
+					leaves = Util.convertReportVOtoLeave(report);
+					//lModel.addBulkLeaves(leaves);
+					for(Leave l :leaves) {
+						int i = lModel.isExist(l);
+						System.out.println(l.toString());
+						System.out.println("APPLY :\t"+i);// 1->filled 0-> empty
+						try {
+							if(i == 0) {
+								lModel.add(l);
+							}
+								
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				} catch (LeaveTypeException | DepartmentException e) {
+					// TODO Auto-generated catch block
+					cookie.setValue("File_was_corrpted");
+					e.printStackTrace();
+				}
+				
+				
+			}
 			
+			response.addCookie(cookie);
+			response.sendRedirect(url+"admin-dashboard.htm");
 		}
 		else if(requestUrl.endsWith(CHECK_USERNAME_EXIST)) {
 			
@@ -181,7 +252,7 @@ public class ApiController extends HttpServlet implements ApiRoutes{
 
 	}// end process
 
-	private void upload(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	private String upload(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
 		String file_name = null;
 		String tempName = "";
@@ -190,7 +261,7 @@ public class ApiController extends HttpServlet implements ApiRoutes{
 		PrintWriter out = response.getWriter();
 		boolean isMultipartContent = ServletFileUpload.isMultipartContent(request);
 		if (!isMultipartContent) {
-			return;
+			return "";
 		}
 		FileItemFactory factory = new DiskFileItemFactory();
 		ServletFileUpload upload = new ServletFileUpload(factory);
@@ -198,7 +269,7 @@ public class ApiController extends HttpServlet implements ApiRoutes{
 			List<FileItem> fields = upload.parseRequest(request);
 			Iterator<FileItem> it = fields.iterator();
 			if (!it.hasNext()) {
-				return;
+				return "";
 			}
 			while (it.hasNext()) {
 				FileItem fileItem = it.next();
@@ -220,7 +291,9 @@ public class ApiController extends HttpServlet implements ApiRoutes{
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			response.sendRedirect("admin-upload-data.htm?file="+file_name+"&tmp="+tempName);
+			//response.sendRedirect("admin-upload-data.htm?file="+file_name+"&tmp="+tempName);
 		}
-	}
+		
+		return tempName;
+	}// end upload
 }

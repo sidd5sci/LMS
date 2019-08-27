@@ -20,11 +20,19 @@
 		    		<input type="text" class="form-control" name="leaveTypeName" value="<%=dpt.getName()%>"/> 
 		    	</div>
 		    	<div class="form-group">
+		    		<label>LeaveType default value *</label>
+		    		<input type="number" class="form-control" name="leaveTypeDefault" value="<%=dpt.getDefaultValue()%>" id="leaveTypeDefault" placeholder="default value" required/>
+		    	</div>
+		    	<div class="form-group">
+		    		<label>LeaveType period *</label>
+		    		<input type="number" class="form-control" name="leaveTypePeriod" value="<%=dpt.getPeriod()%>" id="leaveTypePeriod" placeholder="months" required/>
+		    	</div>
+		    	<div class="form-group">
 		    		<label>LeaveType description</label>
 		    		<textarea class="form-control" name="leaveTypeDesc"><%=dpt.getDescription()%></textarea> 
 		    	</div>
 		
-		    	<button type="submit">Update LeaveType</button>
+		    	<button type="submit" class="form-btn">Update LeaveType</button>
 		    </form>
 		    
     	</div>

@@ -186,7 +186,7 @@ public class FrontController extends HttpServlet implements WebRoutes {
 				Session sess = new Session();
 				sess.setSsid(ssid);
 				sess.setUid(u.getId());
-				sess.setPayload(session.toString());
+				sess.setPayload(Util.encodeJson(session).toString());
 				System.out.println(u.getId());
 				SessionModel sessModel = new SessionModel();
 				sessModel.setSession(sess);
@@ -463,7 +463,9 @@ public class FrontController extends HttpServlet implements WebRoutes {
 				LeaveType lt = new LeaveType();
 
 				lt.setName(request.getParameter("leaveTypeName"));
+				lt.setDefaultValue(Integer.parseInt(request.getParameter("leaveTypeDefault")));
 				lt.setDescription(request.getParameter("leaveTypeDesc"));
+				lt.setPeriod(Integer.parseInt(request.getParameter("leaveTypePeriod")));
 
 				Cookie cookie = new Cookie("message", "LeaveType_Added_Successfully");
 				cookie.setMaxAge(10);
@@ -558,7 +560,9 @@ public class FrontController extends HttpServlet implements WebRoutes {
 				LeaveType lt = new LeaveType();
 				lt.setId(Integer.parseInt(request.getParameter("id")));
 				lt.setName(request.getParameter("leaveTypeName"));
+				lt.setDefaultValue(Integer.parseInt(request.getParameter("leaveTypeDefault")));
 				lt.setDescription(request.getParameter("leaveTypeDesc"));
+				lt.setPeriod(Integer.parseInt(request.getParameter("leaveTypePeriod")));
 
 				Cookie cookie = new Cookie("message", "LeaveType_Updated_Successfully");
 				cookie.setMaxAge(10);
@@ -609,6 +613,41 @@ public class FrontController extends HttpServlet implements WebRoutes {
 
 			}
 		} 
+		/**
+		 * Renew leave types when expired
+		 */
+		else if(requestUrl.endsWith(ADMIN_RENEW_LEAVETYPE)) {
+			Cookie[] cookies = request.getCookies();
+			String ssid = "";
+			for (Cookie c : cookies) {
+				if (c.getName().equals("ssid")) {
+					ssid = c.getValue();
+				}
+			}
+			if (ssid.equals("")) {
+				out.println("419 Session Expired ... ");
+			} else {
+				
+				
+				int id  = Integer.parseInt(request.getParameter("id"));
+				LeaveTypeModel ltModel = new LeaveTypeModel();
+				ltModel.checkLeaveTypeRenew(id);
+				LeaveType leaveType = ltModel.getLeaveTypeById(id);
+				UserLeaveMapperModel ulmModel = new UserLeaveMapperModel();
+				Cookie cookie = new Cookie("message","LeaveType_renewed_successfully");
+				cookie.setMaxAge(10);
+				
+				if(leaveType.getStatus().equals("expired")) {
+					ltModel.renewLeaveType(id);
+					ulmModel.updateMaxLeavesByLeaveType(id,leaveType.getDefaultValue());
+				}else {
+					cookie.setValue("LeaveType_already_Renewed");
+				}
+				
+				response.addCookie(cookie);
+				response.sendRedirect(ADMIN_ALL_LEAVETYPE);
+			}
+		}
 		/**
 		 * Opens the employee add form
 		 */
@@ -677,9 +716,9 @@ public class FrontController extends HttpServlet implements WebRoutes {
 						UserLeaveMapper ulm = new UserLeaveMapper();
 						ulm.setUid(id);
 						ulm.setLeaveTypeId(lt.getId());
-						ulm.setLeaveMax(Integer.parseInt(lt.getDescription()));
+						ulm.setLeaveMax(lt.getDefaultValue());
 						ulm.setLeaveTaken(0);
-						ulm.setLeaveAvailible(Integer.parseInt(lt.getDescription()));
+						ulm.setLeaveAvailible(lt.getDefaultValue());
 						ulm.setTimeDuration(0);
 						ulm.setLeaveFrom(new SimpleDateFormat("dd-M-yy").format(new java.util.Date()));
 						ulm.setLeaveTo(new SimpleDateFormat("dd-M-yy").format(new java.util.Date()));
@@ -1291,7 +1330,7 @@ public class FrontController extends HttpServlet implements WebRoutes {
 				RequestDispatcher rd = request.getRequestDispatcher(path + "admin/index.jsp");
 				rd.forward(request, response);
 				
-				Util.readerExcelHeader("report.xlsx");
+				
 
 			}
 		}

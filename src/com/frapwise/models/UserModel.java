@@ -240,6 +240,21 @@ public class UserModel implements UserDao,Queries{
 		return users;
 	}
 	
+	public int getUserIdByUsername(String username) {
+		int id = 0;
+		try {
+			this.prep = this.conn.prepareStatement(GET_USER_BY_USERNAME);
+			this.prep.setString(1,username);
+			this.result = this.prep.executeQuery();
+			while(this.result.next()) {
+				id = result.getInt("id");
+			}
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return id;
+		
+	}
 	public int checkUsernameExist(String username) {
 		int flag = 0;
 		try {

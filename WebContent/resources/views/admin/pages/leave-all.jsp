@@ -77,13 +77,13 @@ List<Object> users = (ArrayList) request.getAttribute("users");
 					dpt1 = dptModel.getDepartmentById(dpt.getDepartmentId());
 			%>
 				<tr>
-						<td><%=u.getFname()%> - <%=dpt.getLeaveFrom()%> - <%=dpt.getLeaveTo()%></td>
-						<td><%=u.getFname()%></td>
+						<td><%=u.getFname()+" "+u.getLname()%> - <%=Util.hyphenToSlash(dpt.getLeaveFrom())%> - <%=Util.hyphenToSlash(dpt.getLeaveTo())%></td>
+						<td><%=u.getUsername()%></td>
 						<td><%=u.getHomeOffice()%></td>
 						<td><%=lt.getName()%></td>
 						<td><%=dpt1.getName()%></td>
 						<td><% if(dpt.getTimeOffType() == 1) out.println("Full day"); else out.println("Half day");%></td>
-						<td><%=dpt.getLeaveFrom()%> - <%=dpt.getLeaveTo()%></td>
+						<td><%=Util.hyphenToSlash(dpt.getLeaveFrom())%> - <%=Util.hyphenToSlash(dpt.getLeaveTo())%></td>
 						<td><%=u.getFname() %></td>
 						<td><%=dpt.getAppliedDate()%></td>
 						<td><%=dpt.getStatus()%></td>

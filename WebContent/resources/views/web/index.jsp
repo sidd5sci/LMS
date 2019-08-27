@@ -1,6 +1,9 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1"%>
+<%@ page language="java" 
+	contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"
     
+    %>
+    <!-- taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" -->
 <%
 ServletContext ctx = getServletContext();
 String baseUrl = ctx.getInitParameter("url");
@@ -13,9 +16,9 @@ String viewPath = ctx.getInitParameter("viewPath");
 	<head>
 		<meta charset="ISO-8859-1">
 		<title>Home | LMS</title>
-		<link rel="stylesheet" href="<%=baseUrl%>resources/css/grid.css"/>
-		<link rel="stylesheet" href="<%=baseUrl%>resources/css/main.css"/>
-		<link rel="stylesheet" href="<%=baseUrl%>resources/css/home.css"/>
+		<link rel="stylesheet" href="${baseUrl}resources/css/grid.css"/>
+		<link rel="stylesheet" href="${baseUrl}resources/css/main.css"/>
+		<link rel="stylesheet" href="${baseUrl}resources/css/home.css"/>
 		
 		
 	</head>
@@ -51,7 +54,7 @@ String viewPath = ctx.getInitParameter("viewPath");
 				</div>
 				<div class="col-md-6 ">
 					<p style="height:50px;">&nbsp;</p>
-					<img src="<%=baseUrl%>resources/uploads/Screenshot_19.png"/>
+					<img src="${baseUrl}resources/uploads/Screenshot_19.png"/>
 				</div>
 			</div>
 			
