@@ -186,7 +186,7 @@ public class FrontController extends HttpServlet implements WebRoutes {
 				Session sess = new Session();
 				sess.setSsid(ssid);
 				sess.setUid(u.getId());
-				sess.setPayload(session.toString());
+				sess.setPayload(Util.encodeJson(session).toString());
 				System.out.println(u.getId());
 				SessionModel sessModel = new SessionModel();
 				sessModel.setSession(sess);

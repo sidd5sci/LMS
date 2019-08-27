@@ -9,6 +9,8 @@ String baseUrl = ctx.getInitParameter("url");
 String viewPath = ctx.getInitParameter("viewPath");
 
 %>
+
+
     <div class="data-tables">
     
     <table id="dataTable">
