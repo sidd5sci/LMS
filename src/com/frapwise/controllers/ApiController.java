@@ -215,6 +215,7 @@ public class ApiController extends HttpServlet implements ApiRoutes{
 			if(filename.length() > 0 ) {
 				List<ReportVO> report = Util.readerExcelFile(filename);
 				List<Leave> leaves = null;
+				int count = 0,total = 0;
 				try {
 					leaves = Util.convertReportVOtoLeave(report);
 					//lModel.addBulkLeaves(leaves);
@@ -222,9 +223,14 @@ public class ApiController extends HttpServlet implements ApiRoutes{
 						int i = lModel.isExist(l);
 						System.out.println(l.toString());
 						System.out.println("APPLY :\t"+i);// 1->filled 0-> empty
+						
 						try {
 							if(i == 0) {
+								
+								// checking for date collision
+								//Util.getDatesCollision(l, date1, date2)
 								lModel.add(l);
+								count++;
 							}
 								
 						} catch (Exception e) {

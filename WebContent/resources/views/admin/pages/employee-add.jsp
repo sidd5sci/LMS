@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"
     import="java.util.*,com.frapwise.entities.*"%>
@@ -44,15 +45,9 @@ String viewPath = ctx.getInitParameter("viewPath");
 		    		
 		    		<select name="department" class="form-control" id="department" required>
 		    			<option value="0">Select ...</option>
-		    			<% 
-		    				List<Object> departments = (ArrayList) request.getAttribute("departments");
-		    				
-		    				for(Object o : departments){
-		    					Department d = (Department) o;
-		    					out.println("<option value=\""+d.getId()+"\">"+d.getName()+"</option>");
-		    				}
-		    			%>
-		    			
+		    			<c:forEach var="dpt" items="${departments}">
+		    				<option value="${d.getId()}"><c:out value="${dpt.getName()}"/></option>
+		    			</c:forEach>
 		    		</select>
 		    		
 		    	</div>

@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1" import="java.util.*,com.frapwise.entities.*,com.frapwise.models.*"%>
 
@@ -5,7 +6,6 @@
 ServletContext ctx = getServletContext();
 String baseUrl = ctx.getInitParameter("url");
 String viewPath = ctx.getInitParameter("viewPath");
-
 %>
 
 
@@ -15,29 +15,27 @@ String viewPath = ctx.getInitParameter("viewPath");
 
 		<thead>
 			<th>Leave Type</th>
-			<th>Leave Max</th>
 			<th>Leave Taken</th>
 			<th>Leave Availible</th>
-			<th>Duration</th>
-			
 		</thead>
 
 		<tbody>
-			<%
-			LeaveTypeModel ltModel = new LeaveTypeModel();
-			List<UserLeaveMapper> userLeaveMapper = (ArrayList) request.getAttribute("leaveMapper");
 			
-			for(UserLeaveMapper lm:userLeaveMapper){
-				LeaveType lt = ltModel.getLeaveTypeById(lm.getLeaveTypeId());
-			%>
-			<tr>
-				<td><%=lt.getName()%></td>
-				<td><%=lm.getLeaveMax()%></td>
-				<td><%=lm.getLeaveTaken()%></td>
-				<td><%=lm.getLeaveAvailible()%></td>
-				<td><%=lm.getLeaveFrom()%> - <%=lm.getLeaveTo()%></td>
-			</tr>
-			<%} %>
+			<c:forEach var="lm" items="${leaveMapper}">
+				<tr>
+					<td>
+						<c:forEach var="l" items="${leavetypes}">
+							<c:if test="${l.getId() == lm.getLeaveTypeId()}" >
+								<c:out value="${l.getName()}"/>
+							</c:if>
+						</c:forEach>
+					</td>
+					<td><c:out value="${lm.getLeaveTaken()}"/></td>
+					<td><c:out value="${lm.getLeaveAvailible()}"/></td>
+				</tr>
+			</c:forEach>
+			
+			
 		</tbody>
 	</table>
 </div>

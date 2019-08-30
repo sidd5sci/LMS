@@ -7,7 +7,6 @@
 ServletContext ctx = getServletContext();
 String baseUrl = ctx.getInitParameter("url");
 String viewPath = ctx.getInitParameter("viewPath");
-
 %>
 
 
