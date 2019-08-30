@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"
     import="java.util.*,com.frapwise.entities.*"%>
@@ -5,10 +6,6 @@
 ServletContext ctx = getServletContext();
 String baseUrl = ctx.getInitParameter("url");
 String viewPath = ctx.getInitParameter("viewPath");
-
-List<Object> departments = (ArrayList)request.getAttribute("departments");
-List<Object> leavetypes  = (ArrayList)request.getAttribute("leavetypes");
-List<Object> users		  = (ArrayList)request.getAttribute("users");
 %>
     <div class="row">
     
@@ -22,33 +19,24 @@ List<Object> users		  = (ArrayList)request.getAttribute("users");
     				<label>Leave type *</label>
     				<select class="form-control" name="leaveType" required>
     					<option value="0">Select ...</option>
-    					<%for(Object o:leavetypes){ LeaveType lt = (LeaveType) o;%>
-    						<option value="<%=lt.getId()%>"><%=lt.getName()%></option>
-    					<%}%>
+    					<c:forEach var="l" items="${leavetypes}">
+							<option value="${l.getId()}"><c:out value="${l.getName()}"/></option>
+						</c:forEach>
     				</select>
     			</div>
     			<div class="form-group">
     				<label>Employee</label>
     				<select class="form-control" name="user" required>
     					<option value="0">Select ...</option>
-    					<%for(Object o:users){ User u = (User) o;%>
-    						<option value="<%=u.getId()%>"><%=u.getUsername()%></option>
-    					<%}%>
+    					<c:forEach var="u" items="${users}">
+							<option value="${u.getId()}"><c:out value="${u.getUsername()}"/></option>
+						</c:forEach>
     				</select>
     			</div>
     			<div class="form-group">
     				<label>Maximum leaves</label>
     				<input type="number" class="form-control" name="max" id="max" autocomplete="off" required/>
     			</div>
-    			<div class="form-group">
-    				<label>Valid from</label>
-    				<input type="text" class="form-control" name="from" id="assignFrom" autocomplete="off" required/>
-    			</div>
-    			<div class="form-group">
-    				<label>Valid to</label>
-    				<input type="text" class="form-control" name="to" id="assignTo" autocomplete="off" required/>
-    			</div>
-    			
     			<button type="submit" class="form-btn">Submit</button>
     		</form>
     	

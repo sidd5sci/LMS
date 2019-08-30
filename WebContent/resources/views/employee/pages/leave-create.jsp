@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"
     import="java.util.*,com.frapwise.entities.*"%>
@@ -7,7 +8,6 @@ ServletContext ctx = getServletContext();
 String baseUrl = ctx.getInitParameter("url");
 String viewPath = ctx.getInitParameter("viewPath");
 
- List<Object> leavetypes  = (ArrayList)request.getAttribute("leavetypes");
  User user		  = (User)request.getAttribute("user");
 %>    
     
@@ -24,9 +24,9 @@ String viewPath = ctx.getInitParameter("viewPath");
     				<label>Leave type *</label>
     				<select class="form-control" id="leavetype" name="leaveType" required>
     					<option value="0">Select ...</option>
-    					<%for(Object o:leavetypes){ LeaveType lt = (LeaveType) o;%>
-    						<option value="<%=lt.getId()%>"><%=lt.getName()%></option>
-    					<%}%>
+    					<c:forEach var="o" items="${leavetypes}">
+    						<option value="${o.getId()}"><c:out value="${o.getName()}"/></option>
+    					</c:forEach>
     				</select>
     			</div>
     			

@@ -487,13 +487,10 @@ public class Util {
 			e.printStackTrace();
 		}
 		
-		
-		
-		
-		
 		return report;
 		
 	}
+	
 	
 	public static List<Leave> convertReportVOtoLeave(List<ReportVO> report) throws LeaveTypeException, DepartmentException {
 		

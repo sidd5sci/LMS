@@ -618,7 +618,7 @@ public class FrontController extends HttpServlet implements WebRoutes {
 		 */
 		else if(requestUrl.endsWith(ADMIN_RENEW_LEAVETYPE)) {
 			Cookie[] cookies = request.getCookies();
-			String ssid = "";
+			String ssid = ""; 
 			for (Cookie c : cookies) {
 				if (c.getName().equals("ssid")) {
 					ssid = c.getValue();
@@ -760,13 +760,15 @@ public class FrontController extends HttpServlet implements WebRoutes {
 				SessionModel sessModel = new SessionModel();
 				sess = sessModel.getSession(ssid);
 
+				DepartmentModel dptModel = new DepartmentModel();
 				UserModel userModel = new UserModel();
 				try {
 					request.setAttribute("users", userModel.getAll());
+					request.setAttribute("departments", dptModel.getAll());
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					request.setAttribute("message", "Some error occured");
-					e.printStackTrace();
+					//e.printStackTrace();
 				}
 				request.setAttribute("pageName", "employee-all");
 				RequestDispatcher rd = request.getRequestDispatcher(path + "admin/index.jsp");
